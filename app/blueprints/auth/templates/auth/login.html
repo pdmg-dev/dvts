@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block style %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}" />
+{% endblock %}
+
+{% block main %}
+  <div class="d-flex align-items-center justify-content-center min-vh-100">
+    <div class="d-flex p-5" id="loginBox">
+      <div class="w-50">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" id="logo" />
+        <h1>Login</h1>
+      </div>
+      <div class="w-50" id="loginContainer">{% include 'auth/login_form.html' %}</div>
+    </div>
+  </div>
+{% endblock %}

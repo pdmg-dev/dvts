@@ -5,17 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons/bootstrap-icons.min.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='/css/fonts/GoogleSansFlex-VariableFont_GRAD,ROND,opsz,slnt,wdth,wght.ttf') }}"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
 
     {% block style %}
     {% endblock %}
   </head>
   <body>
-    <main class="d-flex position-absolute me-3 mb-3 overflow-hidden">
-      {% block content %}
-      {% endblock %}
-    </main>
+    {% block navbar %}
+    {% endblock %}
+    {% block sidebar %}
+    {% endblock %}
 
-    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    {% block main %}
+      <main class="d-flex position-absolute me-3 mb-3 overflow-hidden">
+        {% block content %}
+        {% endblock %}
+      </main>
+    {% endblock %}
+
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/htmx.min.js')}}"></script>
     {% block script %}
     {% endblock %}
   </body>

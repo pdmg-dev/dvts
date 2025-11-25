@@ -1,5 +1,6 @@
 from flask import Flask
 
+from .blueprints import auth_bp
 from .config import get_config
 from .extensions import bcrypt, db, login_manager, migrate, socketio
 
@@ -16,5 +17,11 @@ def create_app(config_class=None):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     socketio.init_app(app)
+
+    from app import models  # noqa: F401
+
+    login_manager.login_view = "auth.login"
+
+    app.register_blueprint(auth_bp)
 
     return app

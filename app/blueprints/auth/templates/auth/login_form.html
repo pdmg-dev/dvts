@@ -1,0 +1,42 @@
+<form hx-post="{{ url_for('auth.login') }}" hx-target="#loginContainer" hx-swap="innerHTML" novalidate>
+  {{ form.hidden_tag() }}
+
+  <div class="form-floating mb-4">
+    {{
+      form.identifier(
+      class="form-control" + (' is-invalid' if form.identifier.errors else ''),
+      placeholder="Email or username"
+      )
+    }}
+    {{ form.identifier.label }}
+
+    {% for error in form.identifier.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="form-floating mb-2">
+    {{
+      form.password(
+        class="form-control" + (' is-invalid' if form.password.errors else ''),
+        type="password",
+        placeholder="Password",
+      )
+    }}
+    {{ form.password.label }}
+
+    {% for error in form.password.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="d-flex justify-content-between mb-4">
+    <div class="form-check text-start" id="rememberBox">
+      {{ form.remember(class="form-check-input") }}
+      <label for="remember" class="form-check-label fw-medium pe-2"> {{ form.remember.label.text }} </label>
+    </div>
+    <span><a class="badge fw-medium" href="#" id="forgotPass">Forgot password?</a></span>
+  </div>
+
+  <div class="d-flex">{{ form.submit(class="btn btn-primary btn-main rounded-pill ms-auto", id="loginBtn") }}</div>
+</form>

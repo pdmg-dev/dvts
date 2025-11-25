@@ -1,0 +1,57 @@
+#loginBox {
+  background: var(--primary-bg);
+  width: 60%;
+  height: 40%;
+  border-radius: 24px;
+}
+
+@media (max-width: 768px) {
+  #loginBox {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+  }
+}
+
+#logo {
+  height: 40px;
+  margin-bottom: 24px;
+}
+
+#loginContainer {
+  margin-top: 64px;
+}
+
+#rememberBox {
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  margin-left: -8px;
+  min-height: 21.5px !important;
+  font-size: 12px;
+  border-radius: 7px;
+  color: var(--text-primary);
+  background-color: transparent;
+}
+
+#rememberBox:hover,
+#rememberBox:focus-within {
+  background-color: var(--primary-hover);
+}
+
+#rememberBox > .form-check-input {
+  margin: 0 6px 0 -12px;
+}
+
+#forgotPass {
+  margin-right: -8px;
+  font-size: 12px;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+#forgotPass:hover,
+#forgotPass:focus {
+  background-color: var(--primary-color-hover);
+  outline: none;
+}

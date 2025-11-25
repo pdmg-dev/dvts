@@ -1,0 +1,102 @@
+:root {
+  --primary-color: #0d6efd;
+  --primary-light: #afcbf8;
+  --primary-tint: #cfe1fb;
+  --primary-dark: #0a58ca;
+
+  --danger: #dc3545;
+
+  --primary-bg: #fff;
+  --secondary-bg: #f8f9fa;
+
+  --primary-color-hover: #f5f8fd;
+
+  --border-color: #dee2e6;
+
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+}
+
+@font-face {
+  font-family: "Google Sans Flex";
+  src: url("/static/css/fonts/GoogleSansFlex-VariableFont_GRAD,ROND,opsz,slnt,wdth,wght.ttf")
+    format("truetype");
+  font-weight: 100 900;
+  font-stretch: 75% 125%;
+  font-style: normal;
+}
+
+html,
+body {
+  font-family: "Google Sans Flex", Arial, sans-serif;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--secondary-bg);
+}
+
+.form-control + label {
+  color: var(--text-primary);
+}
+
+.form-control:not(:placeholder-shown) + label {
+  color: var(--text-secondary);
+}
+
+.form-control:focus {
+  box-shadow: none;
+  outline: 2px solid var(--primary-color);
+  outline-offset: -2px;
+}
+
+.form-control:focus + label {
+  color: var(--primary-color);
+}
+
+.form-control.is-invalid,
+.form-control.is-invalid:focus {
+  box-shadow: none;
+  outline: 2px solid var(--danger);
+  outline-offset: -2px;
+}
+
+.form-control.is-invalid + label,
+.form-control.is-invalid:focus + label {
+  color: var(--danger);
+}
+
+.form-check-input:focus {
+  border-color: var(--border-color);
+}
+
+.form-check-input:checked {
+  border-color: var(--primary-color);
+}
+
+.form-check-input:checked,
+.form-check-input:not(:checked),
+.form-check-input:not(:checked):focus {
+  box-shadow: none;
+}
+
+.btn-main {
+  height: 40px;
+  width: 80px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.btn-main:focus,
+.btn-main:hover,
+.btn-main:active,
+.btn-main:focus:focus:active {
+  transform: translateY(-0.5px);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 0 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.1s ease;
+  border-color: transparent;
+}

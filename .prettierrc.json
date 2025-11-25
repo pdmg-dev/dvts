@@ -1,0 +1,25 @@
+{
+    "plugins": [
+        "prettier-plugin-jinja-template"
+    ],
+    "overrides": [
+        {
+            "files": [
+                "*.html"
+            ],
+            "options": {
+                "parser": "jinja-template",
+                "tabWidth": 2,
+                "printWidth": 120
+            }
+        },
+        {
+            "files": [
+                "*.js"
+            ],
+            "options": {
+                "tabWidth": 4
+            }
+        }
+    ]
+}

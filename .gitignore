@@ -1,0 +1,32 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask instance folder
+instance/
+*.db
+*.sqlite3
+
+# Environment variables
+.env
+.flaskenv
+
+# Virtual environment
+.venv/
+
+# Node.JS Tooling
+node_modules/
+
+# VS Code settings
+.vscode/
+
+# Linter cache
+.ruff_cache/
+
+# Logs
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db

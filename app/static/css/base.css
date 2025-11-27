@@ -1,20 +1,66 @@
 :root {
-  --primary-color: #0d6efd;
-  --primary-light: #afcbf8;
-  --primary-tint: #cfe1fb;
-  --primary-dark: #0a58ca;
+  --bs-blue: #0d6efd;
+  --bs-indigo: #6610f2;
+  --bs-purple: #6f42c1;
+  --bs-pink: #d63384;
+  --bs-red: #dc3545;
+  --bs-orange: #fd7e14;
+  --bs-yellow: #ffc107;
+  --bs-green: #198754;
+  --bs-teal: #20c997;
+  --bs-cyan: #0dcaf0;
+  --bs-black: #000;
+  --bs-white: #fff;
+  --bs-gray: #6c757d;
+  --bs-gray-dark: #343a40;
+  --bs-gray-100: #f8f9fa; /*--bs-light*/
+  --bs-gray-200: #e9ecef; /*--bs-light-border-subtle*/
+  --bs-gray-300: #dee2e6; /*--bs-border*/
+  --bs-gray-400: #ced4da; /*--bs-dark-bg-subtle*/
+  --bs-gray-500: #adb5bd; /*--bs-dark-border-subtle*/
+  --bs-gray-600: #6c757d; /*--bs-secondary*/
+  --bs-gray-700: #495057; /*--bs-dark-text-emphasis & --bs-secondary*/
+  --bs-gray-800: #343a40; /*--bs-dark-gray*/
+  --bs-gray-900: #212529; /*--bs-dark*/
 
-  --danger: #dc3545;
+  /* Reference */
+  --bs-primary: #0d6efd;
+  --bs-secondary: #6c757d;
+  --bs-success: #198754;
+  --bs-info: #0dcaf0;
+  --bs-warning: #ffc107;
+  --bs-danger: #dc3545;
+  --bs-light: #f8f9fa;
+  --bs-dark: #212529;
 
-  --primary-bg: #fff;
-  --secondary-bg: #f8f9fa;
+  --bs-primary-text-emphasis: #052c65;
+  --bs-secondary-text-emphasis: #2b2f32;
+  --bs-success-text-emphasis: #0a3622;
+  --bs-info-text-emphasis: #055160;
+  --bs-warning-text-emphasis: #664d03;
+  --bs-danger-text-emphasis: #58151c;
+  --bs-light-text-emphasis: #495057;
+  --bs-dark-text-emphasis: #495057;
 
-  --primary-color-hover: #f5f8fd;
+  --bs-primary-bg-subtle: #cfe2ff;
+  --bs-secondary-bg-subtle: #e2e3e5; /*hover*/
+  --bs-success-bg-subtle: #d1e7dd;
+  --bs-info-bg-subtle: #cff4fc;
+  --bs-warning-bg-subtle: #fff3cd;
+  --bs-danger-bg-subtle: #f8d7da;
+  --bs-light-bg-subtle: #fcfcfd;
+  --bs-dark-bg-subtle: #ced4da;
 
-  --border-color: #dee2e6;
+  --bs-primary-border-subtle: #9ec5fe;
+  --bs-secondary-border-subtle: #c4c8cb;
+  --bs-success-border-subtle: #a3cfbb;
+  --bs-info-border-subtle: #9eeaf9;
+  --bs-warning-border-subtle: #ffe69c;
+  --bs-danger-border-subtle: #f1aeb5;
+  --bs-light-border-subtle: #e9ecef;
+  --bs-dark-border-subtle: #adb5bd;
 
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
+  --bs-border-color: #dee2e6;
 }
 
 @font-face {
@@ -34,45 +80,45 @@ body {
 }
 
 body {
-  background-color: var(--secondary-bg);
+  background-color: var(--bs-light);
 }
 
 .form-control + label {
-  color: var(--text-primary);
+  color: var(--bs-black);
 }
 
 .form-control:not(:placeholder-shown) + label {
-  color: var(--text-secondary);
+  color: var(--bs-secondary);
 }
 
 .form-control:focus {
   box-shadow: none;
-  outline: 2px solid var(--primary-color);
+  outline: 2px solid var(--bs-primary);
   outline-offset: -2px;
 }
 
 .form-control:focus + label {
-  color: var(--primary-color);
+  color: var(--bs-primary);
 }
 
 .form-control.is-invalid,
 .form-control.is-invalid:focus {
   box-shadow: none;
-  outline: 2px solid var(--danger);
+  outline: 2px solid var(--bs-danger);
   outline-offset: -2px;
 }
 
 .form-control.is-invalid + label,
 .form-control.is-invalid:focus + label {
-  color: var(--danger);
+  color: var(--bs-danger);
 }
 
 .form-check-input:focus {
-  border-color: var(--border-color);
+  border-color: var(--bs-border-color);
 }
 
 .form-check-input:checked {
-  border-color: var(--primary-color);
+  border-color: var(--bs-primary);
 }
 
 .form-check-input:checked,
@@ -86,6 +132,7 @@ body {
   width: 80px;
   font-size: 14px;
   font-weight: 500;
+  border-radius: 50rem;
 }
 
 .btn-main:focus,
@@ -99,4 +146,58 @@ body {
     0 0 3px rgba(0, 0, 0, 0.05);
   transition: all 0.1s ease;
   border-color: transparent;
+}
+
+.btn-icon {
+  height: 40px;
+  width: 40px;
+  border-radius: 50rem;
+  cursor: pointer;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.btn-icon:hover,
+.btn-icon:focus,
+.btn-icon:focus:active {
+  background-color: var(--bs-secondary-bg-subtle) !important;
+  border-color: var(--bs-secondary-bg-subtle) !important;
+}
+
+.btn-icon .bi {
+  font-size: 16px;
+  -webkit-text-stroke: 0.5px;
+  color: var(--bs-gray-dark);
+}
+
+.btn .bi-x-lg {
+  -webkit-text-stroke: 1px;
+  color: var(--bs-gray-dark) !important;
+}
+
+.dropdown-menu {
+  border: var(--bs-white);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  outline: none;
+  background-color: #e8eaed !important;
+}
+
+.dropdown-item:focus:active {
+  background-color: var(--bs-primary) !important;
+}
+
+.dropdown-menu {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-toggle {
+  border: none !important;
 }

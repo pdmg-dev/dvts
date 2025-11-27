@@ -1,0 +1,45 @@
+<header class="navbar fixed-top d-flex justify-content-between align-items-center p-0">
+  <div class="sidebar-header d-flex align-items-center ms-3">
+    <a class="navbar-brand d-flex align-items-center justify-content-end gap-2 m-0" id="sidebarToggle">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" />
+      <h3 class="mx-2 mb-0">DVFlow</h3>
+    </a>
+  </div>
+
+  <div class="d-none d-sm-flex flex-grow-1 align-items-center justify-content-between me-3" id="searchBar">
+    <button class="btn btn-icon m-1" id="searchBtn"><i class="bi bi-search"></i></button>
+    <input type="search" placeholder="Search voucher" id="searchInput" />
+    <button class="btn btn-icon m-1" id="cancelBtn"><i class="bi bi-x-lg"></i></button>
+  </div>
+
+  <div class="d-none d-sm-flex align-items-center justify-content-center gap-1 ms-auto me-1">
+    <button class="btn btn-icon"><i class="bi bi-gear"></i></button>
+    <button class="btn btn-icon"><i class="bi bi-bell"></i></button>
+  </div>
+
+  <div class="dropdown" id="profileDrop">
+    <button class="btn dropdown-toggle p-0 me-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-person-circle fs-2"></i>
+    </button>
+
+    <div class="dropdown-menu dropdown-menu-end me-3 p-0">
+      <div class="dropdown-container d-flex flex-column">
+        <div class="d-flex align-items-center justify-content-between pe-1" style="height: 48px;">
+          <span class="fw-medium text-muted ps-3">{{ current_user.email }}</span>
+          <button class="btn btn-icon" data-bs-dismiss="dropdown" aria-label="Close">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <div class="d-flex flex-column flex-grow-1 px-3 pb-3">
+          <h4 class="text-center fw-normal mt-auto mb-4">Hi, {{ current_user.full_name }}!</h4>
+          <button type="button" class="btn btn-outline-secondary rounded-pill w-100 mb-2" id="manageProfile">
+            Manage your profile
+          </button>
+          <form action="{{ url_for('auth.logout') }}" method="post">
+            <button class="btn btn-primary btn-main w-100" type="submit">Logout</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

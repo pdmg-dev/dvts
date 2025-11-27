@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 from .blueprints import auth_bp
 from .config import get_config
@@ -23,5 +23,9 @@ def create_app(config_class=None):
     login_manager.login_view = "auth.login"
 
     app.register_blueprint(auth_bp)
+
+    @app.route("/")
+    def index():
+        return render_template("base.html")
 
     return app

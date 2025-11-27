@@ -11,12 +11,14 @@
       href="{{ url_for('static', filename='/css/fonts/GoogleSansFlex-VariableFont_GRAD,ROND,opsz,slnt,wdth,wght.ttf') }}"
     />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}" />
 
     {% block style %}
     {% endblock %}
   </head>
   <body>
     {% block navbar %}
+      {% include 'navbar.html' %}
     {% endblock %}
     {% block sidebar %}
     {% endblock %}
@@ -30,6 +32,8 @@
 
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/htmx.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/navbar.js')}}"></script>
+
     {% block script %}
     {% endblock %}
   </body>

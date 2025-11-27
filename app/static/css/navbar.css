@@ -1,0 +1,92 @@
+.navbar {
+  height: 64px;
+  width: 100%;
+  background-color: var(--bs-light);
+}
+
+.sidebar-header {
+  min-width: 240px;
+}
+
+.navbar-brand {
+  cursor: pointer;
+}
+
+.navbar-brand img {
+  max-height: 30px;
+  width: auto;
+}
+
+.navbar-brand span {
+  font-weight: 500;
+  color: #444746;
+}
+
+#searchBar {
+  background: var(--bs-light-border-subtle);
+  border-radius: 50rem;
+  height: 48px;
+  width: 10%;
+  max-width: 50%;
+}
+
+#searchBar .btn:hover,
+#searchBar .btn:focus {
+  background-color: var(--bs-secondary-bg-subtle) !important;
+  border-color: var(--bs-secondary-bg-subtle) !important;
+}
+
+#searchBar:has(#searchInput:focus) .btn:hover {
+  background-color: var(--bs-secondary-bg-subtle) !important;
+  border-color: var(--bs-secondary-bg-subtle) !important;
+}
+
+#searchInput {
+  min-width: 30%;
+  flex: 1;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  font-size: 16px;
+}
+
+#searchBar:has(#searchInput:focus) {
+  background-color: white;
+  transform: translateY(-0.5px);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 0 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.1s ease;
+}
+
+#searchBar input::placeholder {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  display: none;
+}
+
+#profileDrop .bi {
+  color: var(--bs-gray-dark);
+}
+
+#profileDrop .dropdown-toggle::after {
+  display: none !important; /* hides the caret */
+}
+
+#profileDrop .dropdown-container {
+  height: 350px;
+  width: 300px;
+}
+
+#manageProfile {
+  color: var(--bs-primary);
+  height: 40px;
+}
+
+#manageProfile:hover {
+  background-color: var(--bs-primary-bg-subtle);
+}

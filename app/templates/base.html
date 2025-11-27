@@ -12,6 +12,7 @@
     />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}" />
 
     {% block style %}
     {% endblock %}
@@ -21,6 +22,7 @@
       {% include 'navbar.html' %}
     {% endblock %}
     {% block sidebar %}
+      {% include 'sidebar.html' %}
     {% endblock %}
 
     {% block main %}
@@ -33,6 +35,7 @@
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/htmx.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/navbar.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/sidebar.js')}}"></script>
 
     {% block script %}
     {% endblock %}

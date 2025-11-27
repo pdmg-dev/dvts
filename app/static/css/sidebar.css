@@ -1,0 +1,73 @@
+aside {
+  top: 64px;
+  left: 0;
+  height: calc(100vh - 64px);
+  width: 256px;
+  background-color: var(--bs-light);
+  transition:
+    transform 0.5s ease,
+    opacity 1s ease;
+  transform: translateX(0);
+  overflow: hidden;
+}
+
+aside.sidebar {
+  z-index: 1040;
+}
+
+aside.collapsed {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+#sidebar .btn.btn-primary.btn-main {
+  height: 56px;
+  width: inherit;
+  margin: 0px 8px 0px 8px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+#sidebar .bi-plus {
+  color: white !important;
+}
+
+#sidebar .nav {
+  margin: 0px 8px 0px 8px;
+}
+
+#sidebar .nav-link .bi {
+  -webkit-text-stroke: 0.35px;
+}
+
+.nav-link {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  border-radius: 50rem;
+  color: var(--bs-black);
+}
+
+.nav-link .bi {
+  margin-right: 16px;
+}
+
+.nav-link:hover {
+  background-color: var(--bs-secondary-bg-subtle) !important;
+  border-color: var(--bs-secondary-bg-subtle) !important;
+  color: var(--bs-black);
+  cursor: pointer;
+}
+
+.nav-link:focus,
+.nav-link:focus .bi,
+.nav-link:focus span {
+  color: var(--bs-primary-text-emphasis) !important;
+  font-weight: 500;
+  box-shadow: none;
+}
+
+.nav-link:focus {
+  background-color: var(--bs-primary-bg-subtle) !important;
+}

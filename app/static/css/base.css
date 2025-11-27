@@ -167,12 +167,14 @@ body {
 .btn-icon .bi {
   font-size: 16px;
   -webkit-text-stroke: 0.5px;
-  color: var(--bs-gray-dark);
+}
+
+.bi {
+  color: var(--bs-gray-dark) !important;
 }
 
 .btn .bi-x-lg {
   -webkit-text-stroke: 1px;
-  color: var(--bs-gray-dark) !important;
 }
 
 .dropdown-menu {

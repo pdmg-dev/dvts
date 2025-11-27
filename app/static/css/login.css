@@ -1,12 +1,12 @@
-#loginBox {
-  background: var(--primary-bg);
+.login-box {
+  background: var(--bs-white);
   width: 60%;
   height: 40%;
   border-radius: 24px;
 }
 
 @media (max-width: 768px) {
-  #loginBox {
+  .login-box {
     width: 100vw;
     height: 100vh;
     border-radius: 0;
@@ -30,13 +30,13 @@
   min-height: 21.5px !important;
   font-size: 12px;
   border-radius: 7px;
-  color: var(--text-primary);
+  color: var(--bs-dark-text-emphasis);
   background-color: transparent;
 }
 
 #rememberBox:hover,
 #rememberBox:focus-within {
-  background-color: var(--primary-hover);
+  background-color: var(--bs-light);
 }
 
 #rememberBox > .form-check-input {
@@ -46,12 +46,12 @@
 #forgotPass {
   margin-right: -8px;
   font-size: 12px;
-  color: var(--primary-color);
+  color: var(--bs-primary);
   text-decoration: none;
 }
 
 #forgotPass:hover,
 #forgotPass:focus {
-  background-color: var(--primary-color-hover);
+  background-color: var(--bs-light);
   outline: none;
 }

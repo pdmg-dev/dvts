@@ -53,6 +53,9 @@ aside.collapsed {
   border-radius: 50rem;
   color: var(--bs-black);
   box-shadow: none;
+  padding: 0px 12px;
+  vertical-align: middle;
+  line-height: 1;
 }
 
 .nav-link:hover {
@@ -83,4 +86,8 @@ aside.collapsed {
 
 .nav-link.active i {
   color: var(--bs-primary-text-emphasis) !important;
+}
+
+.nav-link .bi-chevron-down {
+  margin-right: -7px !important;
 }

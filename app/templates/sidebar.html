@@ -23,11 +23,12 @@
           Vouchers
           <span class="text-muted ms-auto digit">{{ pagination.total }}</span>
           <i
-            class="bi bi-chevron-down m-0 ms-1 ps-2"
+            class="bi bi-chevron-down m-0 px-2 py-2"
             data-bs-toggle="collapse"
             data-bs-target="#voucherMenu"
             aria-expanded="false"
             aria-controls="voucherMenu"
+            onclick="event.stopPropagation()"
           ></i>
         </a>
       </li>

@@ -1,3 +1,3 @@
-from . import user
+from . import user, voucher
 
-__all__ = ["user"]
+__all__ = ["user", "voucher"]

@@ -150,7 +150,7 @@ function scrollTable(tableSelector, toolbarSelector) {
 }
 
 document.body.addEventListener("htmx:afterSwap", function (evt) {
-    selectAllBehavior("selectAll", "vouchersTable");
+    selectAllBehavior("selectAll", "vouchersTable", "selectAllDropdown");
     splitLayout(".split", ".table-split-wrapper", ".detail-panel");
     scrollTable(".table-container", ".toolbar");
 });

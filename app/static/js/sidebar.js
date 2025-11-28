@@ -8,16 +8,3 @@ function sidebarToggler(toggleId, sidebarId) {
 }
 
 sidebarToggler("sidebarToggle", "sidebar");
-
-function navlinkActive() {
-    document.addEventListener("htmx:afterOnLoad", function (event) {
-        document
-            .querySelectorAll("#voucherMenu .nav-link")
-            .forEach((link) => link.classList.remove("active"));
-        if (event.detail.element.closest("#voucherMenu")) {
-            event.detail.element.classList.add("active");
-        }
-    });
-}
-
-navlinkActive();

@@ -29,7 +29,13 @@
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        <span class="text-muted"> {{ pagination.page }} - {{ pagination.pages }} of {{ pagination.total }} </span>
+        <span class="text-muted">
+          {% set start = (pagination.page - 1) * pagination.per_page + 1 %}
+          {% set end = [pagination.page * pagination.per_page, pagination.total]|min %}
+
+          {{ start }}-{{ end }}
+          of {{ pagination.total }}
+        </span>
       </button>
       <ul class="dropdown-menu dropdown-menu-end">
         <li>

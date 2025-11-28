@@ -1,16 +1,18 @@
-// Select All
-function selectAllBehavior(seletAllId, vouchersTableId) {
-    const selectAllBtn = document.getElementById(seletAllId);
+function selectAllBehavior(selectAllId, vouchersTableId, dropdownId) {
+    const selectAllBtn = document.getElementById(selectAllId);
     const checkbox = selectAllBtn.querySelector('input[type="checkbox"]');
 
-    const tableSelectButtons = document
-        .getElementById(vouchersTableId)
-        .querySelectorAll("button");
-    const tableCheckboxes = document
-        .getElementById(vouchersTableId)
-        .querySelectorAll('input[type="checkbox"]');
+    const vouchersTable = document.getElementById(vouchersTableId);
+    const tableSelectButtons = vouchersTable.querySelectorAll("button");
+    const tableCheckboxes = vouchersTable.querySelectorAll(
+        'input[type="checkbox"]',
+    );
 
-    // Toggle select all
+    const dropdownMenu = document
+        .getElementById(dropdownId)
+        .querySelector(".dropdown-menu");
+
+    // Toggle select all when clicking the selectAll button
     selectAllBtn.addEventListener("click", (e) => {
         if (e.target !== checkbox) {
             checkbox.checked = !checkbox.checked;
@@ -18,29 +20,57 @@ function selectAllBehavior(seletAllId, vouchersTableId) {
         }
     });
 
-    // Select all / unselect all
+    // Select all / unselect all when the selectAll checkbox changes
     checkbox.addEventListener("change", () => {
-        if (checkbox.checked) {
-            tableCheckboxes.forEach((cb) => {
-                cb.checked = true;
-            });
-        } else {
-            tableCheckboxes.forEach((cb) => {
-                cb.checked = false;
-            });
+        tableCheckboxes.forEach((cb) => (cb.checked = checkbox.checked));
+    });
+
+    // Handle dropdown menu actions
+    dropdownMenu.addEventListener("click", (event) => {
+        const clickedItem = event.target;
+        if (clickedItem.classList.contains("dropdown-item")) {
+            const action = clickedItem.textContent.trim();
+
+            if (action === "All") {
+                tableCheckboxes.forEach((cb) => (cb.checked = true));
+                checkbox.checked = true;
+            }
+            if (action === "None") {
+                tableCheckboxes.forEach((cb) => (cb.checked = false));
+                checkbox.checked = false;
+            }
+            if (action === "Read") {
+                tableCheckboxes.forEach(
+                    (cb) => (cb.checked = cb.dataset.status === "read"),
+                );
+                checkbox.checked = Array.from(tableCheckboxes).some(
+                    (c) => c.checked,
+                );
+            }
+            if (action === "Unread") {
+                tableCheckboxes.forEach(
+                    (cb) => (cb.checked = cb.dataset.status === "unread"),
+                );
+                checkbox.checked = Array.from(tableCheckboxes).some(
+                    (c) => c.checked,
+                );
+            }
         }
     });
 
+    // Handle table button clicks and checkbox syncing
     tableSelectButtons.forEach((btn) => {
         const cb = btn.querySelector('input[type="checkbox"]');
-        // Mark a table checkbox if its button is clicked
+
+        // Toggle checkbox when button is clicked
         btn.addEventListener("click", (e) => {
             if (e.target !== cb) {
                 cb.checked = !cb.checked;
                 cb.dispatchEvent(new Event("change", { bubbles: true }));
             }
         });
-        // Mark the select all checkbox if at least one table checkbox is checked
+
+        // Update selectAll checkbox if any table checkbox is checked
         cb.addEventListener("change", () => {
             const anyChecked = Array.from(tableCheckboxes).some(
                 (c) => c.checked,
@@ -49,7 +79,9 @@ function selectAllBehavior(seletAllId, vouchersTableId) {
         });
     });
 }
-selectAllBehavior("selectAll", "vouchersTable");
+
+// Example usage
+selectAllBehavior("selectAll", "vouchersTable", "selectAllDropdown");
 
 // Split Layout
 function splitLayout(split, splitWrapperSelector, detailPanelSelector) {

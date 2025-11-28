@@ -1,0 +1,45 @@
+.btn-main {
+  height: 40px;
+  width: 80px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 50rem;
+}
+
+.btn-main:focus,
+.btn-main:hover,
+.btn-main:active,
+.btn-main:focus:focus:active {
+  transform: translateY(-0.5px);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 0 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.1s ease;
+  border-color: transparent;
+}
+
+.btn-icon {
+  height: 40px;
+  width: 40px;
+  border-radius: 50rem;
+  cursor: pointer;
+  background-color: none;
+  border-color: none;
+}
+
+.btn-icon:hover,
+.btn-icon:focus,
+.btn-icon:focus:active {
+  background-color: var(--bs-light-border-subtle) !important;
+  border-color: var(--bs-light-border-subtle) !important;
+}
+
+.btn-icon .bi {
+  font-size: 16px;
+  -webkit-text-stroke: 0.5px !important;
+}
+
+.btn.btn-icon:disabled {
+  border-color: transparent;
+}

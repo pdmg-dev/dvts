@@ -1,0 +1,102 @@
+<div class="toolbar px-1">
+  <div class="d-flex align-items-center select-all">
+    <button class="form-check btn btn-icon m-0" id="selectAll">
+      <input class="form-check-input m-0" type="checkbox" />
+    </button>
+
+    <div class="dropdown">
+      <button
+        class="btn btn-icon dropdown-toggle"
+        type="button"
+        id="selectAllDropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <i class="bi bi-chevron-down"></i>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#">All</a></li>
+        <li><a class="dropdown-item" href="#">None</a></li>
+        <li><a class="dropdown-item" href="#">Read</a></li>
+        <li><a class="dropdown-item" href="#">Unread</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <button class="btn btn-icon" hx-get="." hx-target="#content" hx-swap="innerHTML" hx-push-url="true">
+    <i class="bi bi-arrow-clockwise"></i>
+  </button>
+
+  <div class="d-none d-sm-flex ms-auto">
+    <div class="dropdown">
+      <button
+        class="btn btn-icon page-number dropdown-toggle"
+        type="button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <span class="text-muted"> {{ pagination.page }} - {{ pagination.pages }} of {{ pagination.total }} </span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+          <button
+            class="dropdown-item"
+            hx-get="{{ url_for('voucher.all_vouchers', page=1) }}"
+            hx-target="#content"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+          >
+            Newest
+          </button>
+        </li>
+        <li>
+          <button
+            class="dropdown-item"
+            hx-get="{{ url_for('voucher.all_vouchers', page=pagination.pages) }}"
+            hx-target="#content"
+            hx-swap="innerHTML"
+            hx-push-url="true"
+          >
+            Oldest
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    {% if pagination.has_prev %}
+      <button
+        class="btn btn-icon"
+        hx-get="{{ url_for('voucher.all_vouchers', page=pagination.prev_num) }}"
+        hx-target="#content"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+      >
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    {% else %}
+      <button class="btn btn-icon" disabled>
+        <i class="bi bi-chevron-left"></i>
+      </button>
+    {% endif %}
+
+    {% if pagination.has_next %}
+      <button
+        class="btn btn-icon"
+        hx-get="{{ url_for('voucher.all_vouchers', page=pagination.next_num) }}"
+        hx-target="#content"
+        hx-swap="innerHTML"
+        hx-push-url="true"
+      >
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    {% else %}
+      <button class="btn btn-icon" disabled>
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    {% endif %}
+
+    <button class="btn btn-icon split">
+      <i class="bi bi-layout-split"></i>
+    </button>
+  </div>
+</div>

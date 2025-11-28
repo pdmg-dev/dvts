@@ -4,8 +4,12 @@
   background-color: var(--bs-light);
 }
 
+.navbar .bi-x-lg {
+  -webkit-text-stroke: 1px !important;
+}
+
 .sidebar-header {
-  min-width: 240px;
+  min-width: 242px;
 }
 
 .navbar-brand {
@@ -28,6 +32,7 @@
   height: 48px;
   width: 10%;
   max-width: 50%;
+  --searchbar-width: 10%
 }
 
 #searchBar .btn:hover,
@@ -37,8 +42,8 @@
 }
 
 #searchBar:has(#searchInput:focus) .btn:hover {
-  background-color: var(--bs-secondary-bg-subtle) !important;
-  border-color: var(--bs-secondary-bg-subtle) !important;
+  background-color: var(--bs-light-border-subtle) !important;
+  border-color: var(--bs-light-border-subtle) !important;
 }
 
 #searchInput {

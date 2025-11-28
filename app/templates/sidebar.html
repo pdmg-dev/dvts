@@ -10,18 +10,25 @@
     </button>
 
     <ul class="nav flex-column mt-2">
-      <li class="nav-item">
+      <li>
         <a
           href="#"
-          class="nav-link fw-medium"
-          data-bs-toggle="collapse"
-          data-bs-target="#voucherMenu"
-          aria-expanded="false"
-          aria-controls="voucherMenu"
+          hx-get="{{ url_for('voucher.all_vouchers') }}"
+          hx-target="#content"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          class="nav-link fw-medium {% if request.endpoint == 'voucher.all_vouchers' %}active{% endif %}"
         >
           <i class="bi bi-receipt fs-5"></i>
           Vouchers
-          <span class="text-muted ms-auto">101</span>
+          <span class="text-muted ms-auto digit">{{ pagination.total }}</span>
+          <i
+            class="bi bi-chevron-down m-0 ms-1 ps-2"
+            data-bs-toggle="collapse"
+            data-bs-target="#voucherMenu"
+            aria-expanded="false"
+            aria-controls="voucherMenu"
+          ></i>
         </a>
       </li>
       <li class="collapse" id="voucherMenu">
@@ -31,22 +38,22 @@
         <a href="#" class="nav-link"><i class="bi bi-patch-check fs-5"></i>Approved</a>
         <a href="#" class="nav-link"><i class="bi bi-box-arrow-up fs-5"></i>Released</a>
       </li>
-      <li class="nav-item">
+      <li>
         <a href="#" class="nav-link"><i class="bi bi-bar-chart fs-5"></i>Reports</a>
       </li>
-      <li class="nav-item">
+      <li>
         <a href="#" class="nav-link"><i class="bi bi-people fs-5"></i>People</a>
       </li>
     </ul>
 
     <ul class="nav flex-column mt-auto mb-3">
-      <li class="nav-item">
+      <li>
         <a href="#" class="nav-link"><i class="bi bi-clock-history fs-5"></i>Activity</a>
       </li>
-      <li class="nav-item">
+      <li>
         <a href="#" class="nav-link"><i class="bi bi-person fs-5"></i>Profile</a>
       </li>
-      <li class="nav-item">
+      <li>
         <a href="#" class="nav-link"><i class="bi bi-gear fs-5"></i>Settings</a>
       </li>
     </ul>

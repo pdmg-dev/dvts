@@ -1,0 +1,32 @@
+<div class="table-split-wrapper">
+  <div class="table-container" id="tableContainer">
+    <table class="vouchers-table" id="vouchersTable">
+      <tbody>
+        {% for voucher in pagination.items %}
+          <tr>
+            <td class="select-col ps-1">
+              <button class="form-check btn btn-icon m-0">
+                <input class="form-check-input m-0" type="checkbox" />
+              </button>
+            </td>
+            <td class="payee-col">
+              <span>{{ voucher.payee }}</span>
+            </td>
+            <td class="particulars-col">
+              <span> {{ voucher.particulars }} </span>
+            </td>
+            <td class="amount-col">
+              <span> {{ voucher.amount }} </span>
+            </td>
+            <td class="status-col"><span>status</span></td>
+            <td class="status-updated-at-col"><span>status_updated_at</span></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="detail-panel">
+    <div class="text-center mt-5"><span>Select a row to view details</span></div>
+  </div>
+</div>

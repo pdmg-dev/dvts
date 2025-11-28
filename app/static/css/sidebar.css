@@ -38,6 +38,11 @@ aside.collapsed {
 
 #sidebar .nav-link .bi {
   -webkit-text-stroke: 0.35px;
+  margin-right: 16px;
+}
+
+#sidebar .nav-link .bi.bi-chevron-down {
+  -webkit-text-stroke: 0.5px;
 }
 
 .nav-link {
@@ -47,15 +52,12 @@ aside.collapsed {
   justify-content: start;
   border-radius: 50rem;
   color: var(--bs-black);
-}
-
-.nav-link .bi {
-  margin-right: 16px;
+  box-shadow: none;
 }
 
 .nav-link:hover {
-  background-color: var(--bs-secondary-bg-subtle) !important;
-  border-color: var(--bs-secondary-bg-subtle) !important;
+  background-color: var(--bs-light-border-subtle) !important;
+  border-color: var(--bs-light-border-subtle) !important;
   color: var(--bs-black);
   cursor: pointer;
 }
@@ -70,4 +72,15 @@ aside.collapsed {
 
 .nav-link:focus {
   background-color: var(--bs-primary-bg-subtle) !important;
+}
+
+.nav-link.active,
+.nav-link.active .digit {
+  background-color: var(--bs-primary-bg-subtle) !important;
+  color: var(--bs-primary-text-emphasis) !important;
+  font-weight: 500;
+}
+
+.nav-link.active i {
+  color: var(--bs-primary-text-emphasis) !important;
 }

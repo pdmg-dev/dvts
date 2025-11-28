@@ -25,7 +25,7 @@ def login():
 
                 if request.headers.get("HX-Request"):
                     response = make_response("", 204)
-                    response.headers["HX-Redirect"] = url_for("index")
+                    response.headers["HX-Redirect"] = url_for("voucher.all_vouchers")
                     return response
 
             if not user:

@@ -31,11 +31,6 @@
   border-radius: 14px;
 }
 
-.toolbar .split.active {
-  background-color: var(--bs-light-border-subtle) !important;
-  border-color: var(--bs-light-border-subtle) !important;
-}
-
 .vouchers-table {
   display: table;
   table-layout: fixed;

@@ -80,60 +80,6 @@ function selectAllBehavior(selectAllId, vouchersTableId, dropdownId) {
     });
 }
 
-// Example usage
-selectAllBehavior("selectAll", "vouchersTable", "selectAllDropdown");
-
-// Split Layout
-function splitLayout(split, splitWrapperSelector, detailPanelSelector) {
-    const splitBtn = document.querySelector(split);
-    const splitWrapper = document.querySelector(splitWrapperSelector);
-    const detailPanel = document.querySelector(detailPanelSelector);
-    const tableBody = document.querySelector("#vouchersTable tbody");
-
-    splitBtn.addEventListener("click", () => {
-        const active = splitWrapper.classList.toggle("split-active");
-        splitBtn.classList.toggle("active", active);
-
-        if (!active) {
-            // Clear immediately when toggling back
-            detailPanel.innerHTML = "";
-        }
-    });
-
-    // Listen for the end of the transition/animation
-    splitWrapper.addEventListener("transitionend", () => {
-        if (splitWrapper.classList.contains("split-active")) {
-            detailPanel.innerHTML = `
-        <div class="text-center mt-5">
-          <span>Select a row to view details</span>
-        </div>
-      `;
-        }
-    });
-
-    // Event delegation: listen once on tbody
-    tableBody.addEventListener("click", (e) => {
-        const row = e.target.closest("tr");
-        if (!row) return;
-
-        // Only respond if split layout is active
-        if (splitWrapper.classList.contains("split-active")) {
-            const col1 = row.children[0].innerText.trim();
-            const col2 = row.children[1].innerText.trim();
-            const col3 = row.children[2].innerText.trim();
-
-            detailPanel.innerHTML = `
-        <h4 class="mb-3">Row Details</h4>
-        <p><strong>Column 1:</strong> ${col1}</p>
-        <p><strong>Column 2:</strong> ${col2}</p>
-        <p><strong>Column 3:</strong> ${col3}</p>
-      `;
-        }
-    });
-}
-
-splitLayout(".split", ".table-split-wrapper", ".detail-panel");
-
 function scrollTable(tableSelector, toolbarSelector) {
     const tableContainer = document.querySelector(tableSelector);
     const toolbar = document.querySelector(toolbarSelector);
@@ -149,8 +95,83 @@ function scrollTable(tableSelector, toolbarSelector) {
     });
 }
 
-document.body.addEventListener("htmx:afterSwap", function (evt) {
+// Split Layout
+function splitLayout() {
+    const splitBtn = document.getElementById("splitBtn");
+    const splitWrapper = document.querySelector(".table-split-wrapper");
+    const rows = document.querySelectorAll("#vouchersTable tr");
+
+    splitBtn.addEventListener("click", () => {
+        console.log("Split layout button clicked");
+
+        const active = splitWrapper.classList.toggle("split-active");
+        splitBtn.classList.toggle("active", active);
+        console.log(`Split layout is now ${active ? "active" : "inactive"}`);
+
+        rows.forEach((row) => {
+            if (active) {
+                console.log("Setting target to splitPane");
+                row.setAttribute("hx-target", "#splitPane");
+                row.setAttribute("hx-headers", '{"HX-Layout":"split"}');
+            } else {
+                console.log("Setting target to content");
+                row.setAttribute("hx-target", "#content");
+                row.removeAttribute("hx-headers");
+            }
+        });
+
+        localStorage.setItem("vouchersSplitLayout", active ? "true" : "false");
+    });
+
+    const splitSetting = localStorage.getItem("vouchersSplitLayout");
+    if (splitSetting === "true") {
+        // Disable animation temporarily
+        splitWrapper
+            .querySelector(".table-container")
+            .classList.add("no-transition");
+        splitWrapper
+            .querySelector(".detail-panel")
+            .classList.add("no-transition");
+
+        console.log("Applying saved split layout setting: active");
+        splitWrapper.classList.add("split-active");
+        splitBtn.classList.add("active");
+        rows.forEach((row) => {
+            row.setAttribute("hx-target", "#splitPane");
+            row.setAttribute("hx-headers", '{"HX-Layout":"split"}');
+        });
+    } else {
+        console.log("Applying saved split layout setting: inactive");
+        splitWrapper.classList.remove("split-active");
+        splitBtn.classList.remove("active");
+        rows.forEach((row) => {
+            row.setAttribute("hx-target", "#content");
+            row.removeAttribute("hx-headers");
+        });
+
+        // Force reflow, then remove no-transition so future toggles animate
+        void splitWrapper.offsetHeight;
+        splitWrapper
+            .querySelector(".table-container")
+            .classList.remove("no-transition");
+        splitWrapper
+            .querySelector(".detail-panel")
+            .classList.remove("no-transition");
+    }
+}
+
+document.addEventListener("htmx:afterSwap", (evt) => {
+    // Only rebind if the swapped content contains your split button
+    if (evt.target.querySelector("#splitBtn")) {
+        splitLayout();
+    }
+    if (evt.target.querySelector("#vouchersTable")) {
+        selectAllBehavior("selectAll", "vouchersTable", "selectAllDropdown");
+        scrollTable(".table-container", ".toolbar");
+    }
+});
+document.addEventListener("DOMContentLoaded", () => {
+    splitLayout();
     selectAllBehavior("selectAll", "vouchersTable", "selectAllDropdown");
-    splitLayout(".split", ".table-split-wrapper", ".detail-panel");
     scrollTable(".table-container", ".toolbar");
 });

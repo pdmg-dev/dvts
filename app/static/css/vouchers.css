@@ -145,3 +145,13 @@
     transform 0.5s ease;
   transform: translateX(100); /* slides into place */
 }
+
+.toolbar .split.active {
+  background-color: var(--bs-light-border-subtle) !important;
+  border-color: var(--bs-light-border-subtle) !important;
+}
+
+.table-container.no-transition,
+.detail-panel.no-transition {
+  transition: none !important;
+}

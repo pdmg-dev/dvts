@@ -39,7 +39,15 @@ def view_voucher(voucher_id):
         .first()
     )
 
-    template = "voucher_partials.html" if request.headers.get("HX-Request") else "voucher.html"
+    if request.headers.get("HX-Request"):
+        layout = request.headers.get("HX-Layout")
+        if layout == "split":
+            template = "voucher_detail.html"
+        else:
+            template = "voucher_partials.html"
+    else:
+        template = "voucher.html"
+
     return render_template(
         template,
         voucher=voucher,

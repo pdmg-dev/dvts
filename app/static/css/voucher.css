@@ -1,0 +1,147 @@
+.toolbar .form-check > .form-check-input {
+  border-color: var(--bs-gray-dark) !important;
+}
+
+.toolbar .select-all:has(.dropdown-toggle.show),
+.toolbar .select-all:has(.form-check-input:checked),
+.toolbar .form-check-input:has(.drdropdown-toggleopdown.show) {
+  background-color: var(--bs-light-border-subtle) !important;
+  border-color: var(--bs-light-border-subtle) !important;
+}
+
+.toolbar .select-all,
+.select-all .btn {
+  border-radius: 14px;
+}
+
+.toolbar .btn-icon.dropdown-toggle {
+  height: 40px;
+  border-radius: 14px;
+  margin-left: -8px;
+}
+
+.toolbar .page-number {
+  width: max-content;
+  font-size: 12px;
+  border-radius: 14px;
+  white-space: nowrap;
+}
+
+.toolbar .split {
+  border-radius: 14px;
+}
+
+.toolbar .split.active {
+  background-color: var(--bs-light-border-subtle) !important;
+  border-color: var(--bs-light-border-subtle) !important;
+}
+
+.vouchers-table {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.vouchers-table .form-check > .form-check-input {
+  border-color: var(--bs-secondary-bg-subtle) !important;
+}
+
+.vouchers-table tr:hover .form-check > .form-check-input {
+  border-color: var(--bs-gray-dark) !important;
+}
+
+.vouchers-table tr:hover .form-check > .form-check-input:checked {
+  border-color: var(--bs-primary) !important;
+}
+
+.vouchers-table button:hover.form-check:has(.form-check-input:checked) {
+  background-color: var(--bs-primary-border-subtle) !important;
+  border-color: var(--bs-primary-border-subtle) !important;
+}
+
+.vouchers-table button:focus.form-check:has(.form-check-input) {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+.vouchers-table tr {
+  border-bottom: 1px solid var(--bs-light-border-subtle);
+  transition: all 0.05s ease;
+}
+
+.vouchers-table tr:hover {
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 0 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.025s ease;
+  cursor: pointer;
+}
+
+.vouchers-table tr:has(.form-check-input:checked) {
+  background-color: var(--bs-primary-bg-subtle) !important;
+}
+
+.vouchers-table td {
+  height: 40px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.vouchers-table .select-col {
+  width: 46px;
+}
+
+.vouchers-table .payee-col {
+  width: 196px;
+}
+
+.vouchers-table .particulars-col {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.toolbar.table-scrolled {
+  position: sticky;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.1s ease;
+}
+
+.table-split-wrapper {
+  display: flex;
+  width: 100%;
+  height: calc(100% - 48px);
+  overflow: visible;
+}
+
+.table-container {
+  flex: 1 1 100%; /* starts full width */
+  transition: flex-basis 0.5s ease;
+}
+
+.detail-panel {
+  flex: 0 1 0%; /* starts hidden */
+  background: white;
+  opacity: 0;
+  transform: translateX(20px); /* slight offset for slide-in */
+  transition:
+    flex-basis 0.5s ease,
+    opacity 0.25s ease,
+    transform 0.5s ease;
+  overflow: hidden;
+}
+
+.table-split-wrapper.split-active .table-container {
+  flex: 1 1 50%; /* shrinks smoothly */
+}
+
+.table-split-wrapper.split-active .detail-panel {
+  flex: 1 1 50%; /* grows smoothly */
+  opacity: 1;
+  transition:
+    flex-basis 0.5s ease,
+    opacity 0.25s ease,
+    transform 0.5s ease;
+  transform: translateX(100); /* slides into place */
+}

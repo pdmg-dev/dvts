@@ -19,16 +19,32 @@ def all_vouchers():
 
 @voucher_bp.route("/<int:voucher_id>")
 def view_voucher(voucher_id):
-    voucher_number = request.args.get("voucher_number")  # Fetch the voucher_number
+    voucher = DisbursementVoucher.query.get_or_404(voucher_id)
 
-    voucher = DisbursementVoucher.query.get(voucher_id)
-    page = request.args.get("page", 1, type=int)
-    per_page = 25
-
-    pagination = DisbursementVoucher.query.paginate(page=page, per_page=per_page, error_out=False)
+    # Item number
+    item_number = (
+        DisbursementVoucher.query.order_by(DisbursementVoucher.id).filter(DisbursementVoucher.id <= voucher_id).count()
+    )
     total_vouchers = DisbursementVoucher.query.count()
+
+    # Next voucher (if any)
+    next_voucher = (
+        DisbursementVoucher.query.order_by(DisbursementVoucher.id).filter(DisbursementVoucher.id > voucher_id).first()
+    )
+
+    # Previous voucher (if any)
+    prev_voucher = (
+        DisbursementVoucher.query.order_by(DisbursementVoucher.id.desc())
+        .filter(DisbursementVoucher.id < voucher_id)
+        .first()
+    )
 
     template = "voucher_partials.html" if request.headers.get("HX-Request") else "voucher.html"
     return render_template(
-        template, voucher=voucher, pagination=pagination, total_vouchers=total_vouchers, voucher_number=voucher_number
+        template,
+        voucher=voucher,
+        item_number=item_number,
+        total_vouchers=total_vouchers,
+        next_voucher=next_voucher,
+        prev_voucher=prev_voucher,
     )

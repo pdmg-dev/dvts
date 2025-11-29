@@ -17,7 +17,7 @@
           hx-target="#content"
           hx-swap="innerHTML"
           hx-push-url="true"
-          class="nav-link fw-medium {% if request.endpoint == 'voucher.all_vouchers' %}active{% endif %}"
+          class="nav-link fw-medium {% if request.endpoint in ['voucher.all_vouchers', 'voucher.view_voucher'] %}active{% endif %}"
         >
           <i class="bi bi-receipt fs-5"></i>
           Vouchers

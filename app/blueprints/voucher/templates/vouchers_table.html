@@ -2,7 +2,7 @@
   <div class="table-container" id="tableContainer">
     <table class="vouchers-table" id="vouchersTable">
       <tbody>
-        {% for voucher in pagination.items %}
+        {% for voucher in vouchers.items %}
           <tr
             hx-get="{{ url_for('voucher.view_voucher', voucher_id=voucher.id) }}"
             hx-target="#content"

@@ -1,102 +1,85 @@
-function selectAllBehavior(selectAllId, vouchersTableId, dropdownId) {
-    const selectAllBtn = document.getElementById(selectAllId);
-    const checkbox = selectAllBtn.querySelector('input[type="checkbox"]');
+// Select All Vouchers
+function initSelectAllVouchers() {
+    const selectAllBtn = document.getElementById("selectAllBtn");
+    const selectAllCbx = selectAllBtn.querySelector('input[type="checkbox"]');
 
-    const vouchersTable = document.getElementById(vouchersTableId);
-    const tableSelectButtons = vouchersTable.querySelectorAll("button");
-    const tableCheckboxes = vouchersTable.querySelectorAll(
-        'input[type="checkbox"]',
-    );
+    const vouchersTable = document.getElementById("vouchersTable");
+    const selectBtns = vouchersTable.querySelectorAll("button");
+    const selectCbxs = vouchersTable.querySelectorAll('input[type="checkbox"]');
 
     const dropdownMenu = document
-        .getElementById(dropdownId)
+        .getElementById("selectAllDropdown")
         .querySelector(".dropdown-menu");
 
-    // Toggle select all when clicking the selectAll button
+    // Select All button
     selectAllBtn.addEventListener("click", (e) => {
-        if (e.target !== checkbox) {
-            checkbox.checked = !checkbox.checked;
-            checkbox.dispatchEvent(new Event("change", { bubbles: true }));
+        if (e.target !== selectAllCbx) {
+            selectAllCbx.click(); // Toggle checkbox
         }
     });
 
-    // Select all / unselect all when the selectAll checkbox changes
-    checkbox.addEventListener("change", () => {
-        tableCheckboxes.forEach((cb) => (cb.checked = checkbox.checked));
+    // Select All checkbox
+    selectAllCbx.addEventListener("change", () => {
+        selectCbxs.forEach((cb) => (cb.checked = selectAllCbx.checked));
     });
 
-    // Handle dropdown menu actions
-    dropdownMenu.addEventListener("click", (event) => {
-        const clickedItem = event.target;
-        if (clickedItem.classList.contains("dropdown-item")) {
-            const action = clickedItem.textContent.trim();
-
-            if (action === "All") {
-                tableCheckboxes.forEach((cb) => (cb.checked = true));
-                checkbox.checked = true;
-            }
-            if (action === "None") {
-                tableCheckboxes.forEach((cb) => (cb.checked = false));
-                checkbox.checked = false;
-            }
-            if (action === "Read") {
-                tableCheckboxes.forEach(
-                    (cb) => (cb.checked = cb.dataset.status === "read"),
-                );
-                checkbox.checked = Array.from(tableCheckboxes).some(
-                    (c) => c.checked,
-                );
-            }
-            if (action === "Unread") {
-                tableCheckboxes.forEach(
-                    (cb) => (cb.checked = cb.dataset.status === "unread"),
-                );
-                checkbox.checked = Array.from(tableCheckboxes).some(
-                    (c) => c.checked,
-                );
-            }
-        }
-    });
-
-    // Handle table button clicks and checkbox syncing
-    tableSelectButtons.forEach((btn) => {
+    // Individual voucher select buttons
+    selectBtns.forEach((btn) => {
         const cb = btn.querySelector('input[type="checkbox"]');
 
-        // Toggle checkbox when button is clicked
+        // Button click toggles checkbox
         btn.addEventListener("click", (e) => {
             if (e.target !== cb) {
-                cb.checked = !cb.checked;
-                cb.dispatchEvent(new Event("change", { bubbles: true }));
+                cb.click();
             }
         });
 
-        // Update selectAll checkbox if any table checkbox is checked
+        // Checkbox change updates Select All state
         cb.addEventListener("change", () => {
-            const anyChecked = Array.from(tableCheckboxes).some(
-                (c) => c.checked,
-            );
-            checkbox.checked = anyChecked;
+            const anyChecked = Array.from(selectCbxs).some((c) => c.checked);
+            selectAllCbx.checked = anyChecked;
         });
+    });
+
+    // Dropdown menu actions
+    dropdownMenu.addEventListener("click", (event) => {
+        const clickedItem = event.target;
+        if (!clickedItem.classList.contains("dropdown-item")) return;
+
+        const action = clickedItem.textContent.trim();
+
+        // Perform action based on clicked item
+        switch (action) {
+            case "All":
+                selectCbxs.forEach((cb) => (cb.checked = true)); // Check all
+                selectAllCbx.checked = true;
+                break;
+
+            case "None":
+                selectCbxs.forEach((cb) => (cb.checked = false)); // Uncheck all
+                selectAllCbx.checked = false;
+                break;
+        }
     });
 }
 
-function scrollTable(tableSelector, toolbarSelector) {
-    const tableContainer = document.querySelector(tableSelector);
-    const toolbar = document.querySelector(toolbarSelector);
+// Table Scroll Behavior
+function initTableScroll() {
+    const tableContainer = document.querySelector(".table-container");
+    const toolbar = document.querySelector(".toolbar");
 
     tableContainer.addEventListener("scroll", () => {
-        // If the table is scrolled down
+        // Add or remove class based on scroll position
         if (tableContainer.scrollTop > 0) {
             toolbar.classList.add("table-scrolled");
         } else {
-            // Back at the very top
             toolbar.classList.remove("table-scrolled");
         }
     });
 }
 
-// Split Layout
-function splitLayout() {
+// Split Layout Toggle
+function initSplitLayout() {
     const splitBtn = document.getElementById("splitBtn");
     const splitWrapper = document.querySelector(".table-split-wrapper");
     const rows = document.querySelectorAll("#vouchersTable tr");
@@ -161,17 +144,19 @@ function splitLayout() {
 }
 
 document.addEventListener("htmx:afterSwap", (evt) => {
+    // Only rebind if the swapped content contains the vouchers table
+    if (evt.target.querySelector("#vouchersTable")) {
+        initSelectAllVouchers();
+        initTableScroll();
+    }
     // Only rebind if the swapped content contains your split button
     if (evt.target.querySelector("#splitBtn")) {
-        splitLayout();
-    }
-    if (evt.target.querySelector("#vouchersTable")) {
-        selectAllBehavior("selectAll", "vouchersTable", "selectAllDropdown");
-        scrollTable(".table-container", ".toolbar");
+        initSplitLayout();
     }
 });
+
 document.addEventListener("DOMContentLoaded", () => {
-    splitLayout();
-    selectAllBehavior("selectAll", "vouchersTable", "selectAllDropdown");
-    scrollTable(".table-container", ".toolbar");
+    initSelectAllVouchers();
+    initTableScroll();
+    initSplitLayout();
 });

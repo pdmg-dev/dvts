@@ -2,6 +2,7 @@
 initSelectAllVouchers();
 initTableScroll();
 initSplitLayout();
+initTableArrowNavigation();
 
 // Re-initialize functionalities after HTMX content swap
 document.addEventListener("htmx:afterSwap", (evt) => {
@@ -9,6 +10,7 @@ document.addEventListener("htmx:afterSwap", (evt) => {
     if (evt.target.querySelector("#vouchersTable")) {
         initSelectAllVouchers();
         initTableScroll();
+        initTableArrowNavigation();
     }
     // Only rebind if the swapped content contains your split button
     if (evt.target.querySelector("#splitBtn")) {
@@ -141,4 +143,54 @@ function initSplitLayout() {
     } else {
         applyLayout(false);
     }
+}
+
+function initTableArrowNavigation() {
+    const rows = document.querySelectorAll("#vouchersTable tbody tr");
+    if (!rows.length) return;
+
+    // Ensure rows are focusable
+    rows.forEach((row) => row.setAttribute("tabindex", "0"));
+
+    document.addEventListener("keydown", function (event) {
+        const active = document.activeElement;
+        let currentIndex = Array.from(rows).indexOf(active);
+
+        // Find the split wrapper
+        const splitWrapper = document.querySelector(".table-split-wrapper");
+        const splitActive =
+            splitWrapper && splitWrapper.classList.contains("split-active");
+
+        // Arrow navigation
+        if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+            if (currentIndex === -1) {
+                rows[0].focus();
+                if (splitActive) {
+                    rows[0].click();
+                }
+            } else {
+                if (event.key === "ArrowUp" && currentIndex > 0) {
+                    rows[currentIndex - 1].focus();
+                    if (splitActive) {
+                        rows[currentIndex - 1].click();
+                    }
+                } else if (
+                    event.key === "ArrowDown" &&
+                    currentIndex < rows.length - 1
+                ) {
+                    rows[currentIndex + 1].focus();
+                    if (splitActive) {
+                        rows[currentIndex + 1].click();
+                    }
+                }
+            }
+            event.preventDefault(); // Prevent default scrolling
+        }
+
+        // Enter key handling
+        if (event.key === "Enter" && currentIndex !== -1) {
+            rows[currentIndex].click(); // Trigger row click
+            event.preventDefault();
+        }
+    });
 }

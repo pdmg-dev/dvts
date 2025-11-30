@@ -15,7 +15,13 @@
     </div>
   </div>
 
-  <button class="btn btn-icon" hx-get="." hx-target="#content" hx-swap="innerHTML" hx-push-url="true">
+  <button
+    class="btn btn-icon"
+    hx-get="{{ url_for('voucher.all_vouchers') }}"
+    hx-target="#content"
+    hx-swap="innerHTML"
+    hx-push-url="true"
+  >
     <i class="bi bi-arrow-clockwise"></i>
   </button>
 

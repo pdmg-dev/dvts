@@ -44,9 +44,24 @@
   border-color: transparent;
 }
 
-.toolbar .page-number {
+.page-number {
   width: max-content;
   font-size: 12px;
   border-radius: 14px;
   white-space: nowrap;
+}
+
+.floating-card {
+  position: fixed;
+  bottom: 0;
+  right: 32px;
+  width: 45%;
+  height: 475px;
+  z-index: 1050;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.2),
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 0 3px rgba(0, 0, 0, 0.05);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }

@@ -9,6 +9,12 @@
     {% include 'vouchers_toolbar.html' %}
     {% include 'vouchers_table.html' %}
   </div>
+
+  {% if show_card %}
+    <div id="floatingCardContainer">{% include 'new_voucher.html' %}</div>
+  {% else %}
+    <div id="floatingCardContainer"></div>
+  {% endif %}
 {% endblock %}
 
 {% block script %}

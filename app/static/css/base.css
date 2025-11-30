@@ -61,7 +61,7 @@
   --bs-dark-border-subtle: #adb5bd;
 
   --bs-border-color: #dee2e6;
-
+  --bs-primary-lightest: #f2f8ff;
 }
 
 @font-face {
@@ -236,4 +236,23 @@ main .table-container {
 
 .digit {
   font-size: 12px;
+}
+
+.card,
+.card-header,
+.card-footer {
+  border: none;
+}
+
+.card-header {
+  background-color: var(--bs-primary-lightest);
+}
+
+.card-header span {
+  color: var(--bs-primary-text-emphasis);
+  font-weight: 600;
+}
+
+.card i.bi.bi-x-lg {
+  -webkit-text-stroke: 1px !important;
 }

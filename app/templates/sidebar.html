@@ -4,6 +4,10 @@
     <button
       type="button"
       class="btn btn-primary btn-main d-flex align-items-center justify-content-center gap-1 mt-1 mb-2"
+      hx-get="{{ url_for('voucher.new_voucher') }}"
+      hx-target="#floatingCardContainer"
+      hx-swap="innerHTML"
+      hx-push-url="true"
     >
       <i class="bi bi-plus fs-2"></i>
       <span class="fw-medium">New Voucher</span>
@@ -17,7 +21,7 @@
           hx-target="#content"
           hx-swap="innerHTML"
           hx-push-url="true"
-          class="nav-link fw-medium {% if request.endpoint in ['voucher.all_vouchers', 'voucher.view_voucher'] %}active{% endif %}"
+          class="nav-link fw-medium {% if request.endpoint in ['voucher.all_vouchers', 'voucher.view_voucher', 'voucher.new_voucher'] %}active{% endif %}"
         >
           <i class="bi bi-receipt fs-5"></i>
           Vouchers

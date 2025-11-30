@@ -1,3 +1,21 @@
+// Initialize all functionalities on page load
+initSelectAllVouchers();
+initTableScroll();
+initSplitLayout();
+
+// Re-initialize functionalities after HTMX content swap
+document.addEventListener("htmx:afterSwap", (evt) => {
+    // Only rebind if the swapped content contains the vouchers table
+    if (evt.target.querySelector("#vouchersTable")) {
+        initSelectAllVouchers();
+        initTableScroll();
+    }
+    // Only rebind if the swapped content contains your split button
+    if (evt.target.querySelector("#splitBtn")) {
+        initSplitLayout();
+    }
+});
+
 // Select All Vouchers
 function initSelectAllVouchers() {
     const selectAllBtn = document.getElementById("selectAllBtn");
@@ -83,80 +101,44 @@ function initSplitLayout() {
     const splitBtn = document.getElementById("splitBtn");
     const splitWrapper = document.querySelector(".table-split-wrapper");
     const rows = document.querySelectorAll("#vouchersTable tr");
+    const tableContainer = splitWrapper.querySelector(".table-container");
+    const detailPanel = splitWrapper.querySelector(".detail-panel");
 
-    splitBtn.addEventListener("click", () => {
-        console.log("Split layout button clicked");
-
-        const active = splitWrapper.classList.toggle("split-active");
+    // Apply layout state to wrapper, button, and rows
+    function applyLayout(active) {
+        splitWrapper.classList.toggle("split-active", active);
         splitBtn.classList.toggle("active", active);
-        console.log(`Split layout is now ${active ? "active" : "inactive"}`);
 
+        // Update each row's htmx attributes
         rows.forEach((row) => {
-            if (active) {
-                console.log("Setting target to splitPane");
-                row.setAttribute("hx-target", "#splitPane");
-                row.setAttribute("hx-headers", '{"HX-Layout":"split"}');
-            } else {
-                console.log("Setting target to content");
-                row.setAttribute("hx-target", "#content");
-                row.removeAttribute("hx-headers");
-            }
+            row.setAttribute("hx-target", active ? "#splitPane" : "#content");
+            row.setAttribute("hx-push-url", active ? "false" : "true");
+            active
+                ? row.setAttribute("hx-headers", '{"HX-Layout":"split"}')
+                : row.removeAttribute("hx-headers");
         });
+    }
 
-        localStorage.setItem("vouchersSplitLayout", active ? "true" : "false");
+    // Button click toggles layout
+    splitBtn.addEventListener("click", () => {
+        const active = splitWrapper.classList.toggle("split-active");
+        applyLayout(active);
+        localStorage.setItem("vouchersSplitLayout", active ? "true" : "false"); // Save setting
     });
 
-    const splitSetting = localStorage.getItem("vouchersSplitLayout");
-    if (splitSetting === "true") {
-        // Disable animation temporarily
-        splitWrapper
-            .querySelector(".table-container")
-            .classList.add("no-transition");
-        splitWrapper
-            .querySelector(".detail-panel")
-            .classList.add("no-transition");
-
-        console.log("Applying saved split layout setting: active");
-        splitWrapper.classList.add("split-active");
-        splitBtn.classList.add("active");
-        rows.forEach((row) => {
-            row.setAttribute("hx-target", "#splitPane");
-            row.setAttribute("hx-headers", '{"HX-Layout":"split"}');
-        });
-    } else {
-        console.log("Applying saved split layout setting: inactive");
-        splitWrapper.classList.remove("split-active");
-        splitBtn.classList.remove("active");
-        rows.forEach((row) => {
-            row.setAttribute("hx-target", "#content");
-            row.removeAttribute("hx-headers");
-        });
+    // Apply saved state immediately
+    const saved = localStorage.getItem("vouchersSplitLayout") === "true";
+    if (saved) {
+        // Disable transitions temporarily so it "just appears" split
+        tableContainer.classList.add("no-transition");
+        detailPanel.classList.add("no-transition");
+        applyLayout(true);
 
         // Force reflow, then remove no-transition so future toggles animate
         void splitWrapper.offsetHeight;
-        splitWrapper
-            .querySelector(".table-container")
-            .classList.remove("no-transition");
-        splitWrapper
-            .querySelector(".detail-panel")
-            .classList.remove("no-transition");
+        tableContainer.classList.remove("no-transition");
+        detailPanel.classList.remove("no-transition");
+    } else {
+        applyLayout(false);
     }
 }
-
-document.addEventListener("htmx:afterSwap", (evt) => {
-    // Only rebind if the swapped content contains the vouchers table
-    if (evt.target.querySelector("#vouchersTable")) {
-        initSelectAllVouchers();
-        initTableScroll();
-    }
-    // Only rebind if the swapped content contains your split button
-    if (evt.target.querySelector("#splitBtn")) {
-        initSplitLayout();
-    }
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    initSelectAllVouchers();
-    initTableScroll();
-    initSplitLayout();
-});

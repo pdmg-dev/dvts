@@ -1,0 +1,59 @@
+#removeFile:hover,
+#removeFile:focus {
+  background-color: var(--bs-light-border-subtle) !important;
+}
+
+#attachment.form-control.has-file {
+  border: 2px solid var(--bs-primary);
+  outline: none !important;
+  border-right: transparent !important;
+}
+
+#attachment.form-control.has-file ~ #removeFile,
+#attachment.form-control.has-file:focus ~ #removeFile {
+  border: 2px solid var(--bs-primary);
+  outline: none !important;
+  border-left: transparent !important;
+  box-shadow: none !important;
+}
+
+#attachment.form-control.has-file:not(:focus) {
+  border: 1px solid var(--bs-border-color);
+  outline: none !important;
+}
+
+#attachment.form-control.has-file:not(:focus) ~ #removeFile {
+  border: 1px solid var(--bs-border-color);
+  outline: none !important;
+  border-left: transparent !important;
+}
+
+#attachment::file-selector-button {
+  border-right: none;
+}
+
+#modeOfPayment .form-check-label {
+  font-size: 12px;
+}
+
+#newVoucherForm .row {
+  margin-bottom: 8px;
+}
+
+#attachment {
+  color: var(--bs-secondary);
+}
+
+#attachment.has-file {
+  color: var(--bs-gray-dark);
+}
+
+#newVoucherForm .form-check-input:focus {
+  box-shadow: none;
+  outline: 2px solid var(--bs-primary);
+  outline-offset: -2px;
+}
+
+#newVoucherForm #dvNumber:disabled {
+  background-color: var(--bs-light);
+}

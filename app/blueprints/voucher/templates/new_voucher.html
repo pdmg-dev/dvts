@@ -7,10 +7,3 @@
   </div>
   <div class="card-body d-flex" style="overflow-y: auto;">{% include 'new_voucher_form.html' %}</div>
 </div>
-
-<script>
-  document.getElementById("closeVoucherCard").addEventListener("click", function () {
-    document.getElementById("newVoucherCard").remove();
-    history.pushState({}, "", "/vouchers");
-  });
-</script>

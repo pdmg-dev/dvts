@@ -3,6 +3,7 @@ from flask import Flask, render_template
 from .blueprints import auth_bp, voucher_bp
 from .config import get_config
 from .extensions import bcrypt, db, login_manager, migrate, socketio
+from .filters import init_filters
 
 
 def create_app(config_class=None):
@@ -17,6 +18,9 @@ def create_app(config_class=None):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     socketio.init_app(app)
+
+    # Register custom Jinja filters
+    init_filters(app)
 
     from app import models  # noqa: F401
 

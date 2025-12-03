@@ -157,7 +157,7 @@
     flex-basis 0.5s ease,
     opacity 0.25s ease,
     transform 0.5s ease;
-  transform: translateX(100); /* slides into place */
+  transform: translateX(0); /* slides into place */
 }
 
 .toolbar .split.active {

@@ -138,4 +138,4 @@ def save_voucher():
 
     fresh_form = DVForm(formdata=None)
 
-    return render_template("fragments/voucher_create_response.html", voucher=voucher, form=fresh_form)
+    return render_template("fragments/create_response.html", voucher=voucher, form=fresh_form)

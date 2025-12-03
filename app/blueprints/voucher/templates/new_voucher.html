@@ -5,5 +5,8 @@
       <i class="bi bi-x-lg"></i>
     </button>
   </div>
-  <div class="card-body d-flex" style="overflow-y: auto;">{% include 'new_voucher_form.html' %}</div>
+  <div class="card-body d-flex" id="voucherFormContainer">{% include 'new_voucher_form.html' %}</div>
+  <div class="card-footer">
+    <button type="submit" class="btn btn-primary btn-main" form="newVoucherForm">Save</button>
+  </div>
 </div>

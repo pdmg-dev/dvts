@@ -65,3 +65,20 @@
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
+
+@media (max-width: 768px) {
+  .floating-card {
+    width: 100%;
+    right: 0;
+    left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .floating-card {
+    width: 100%;
+    right: 0;
+    left: 0;
+    height: 475px;
+  }
+}

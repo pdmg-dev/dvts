@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from app.extensions import db
 
 
@@ -17,6 +19,11 @@ class DisbursementVoucher(db.Model):
 
     particulars = db.Column(db.Text, nullable=False)
     amount = db.Column(db.Numeric(15, 2), nullable=False)
+
+    attachment = db.Column(db.String(120))
+
+    date_received = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    category = db.Column(db.String(20))
 
     def __repr__(self):
         return f"<Voucher: {self.payee} | {self.amount}>"

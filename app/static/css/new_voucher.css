@@ -36,10 +36,6 @@
   font-size: 12px;
 }
 
-#newVoucherForm .row {
-  margin-bottom: 8px;
-}
-
 #attachment {
   color: var(--bs-secondary);
 }
@@ -54,6 +50,41 @@
   outline-offset: -2px;
 }
 
-#newVoucherForm #dvNumber:disabled {
+#newVoucherForm :disabled,
+#newVoucherForm .form-select {
   background-color: var(--bs-light);
+  color: #595c5f;
+}
+
+#newVoucherForm #particulars {
+  resize: none;
+  height: 75px;
+}
+
+#newVoucherForm .section-header {
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  #newVoucherForm #particulars {
+    resize: none;
+    height: 75%;
+  }
+}
+
+/* Make datepicker look like normal Bootstrap input */
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  transform: scale(1.6);
+  filter: grayscale(100%);
+  opacity: 0.5;
 }

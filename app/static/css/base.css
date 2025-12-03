@@ -256,3 +256,13 @@ main .table-container {
 .card i.bi.bi-x-lg {
   -webkit-text-stroke: 1px !important;
 }
+
+.card-body {
+  overflow-y: auto;
+}
+
+.card-footer {
+  background-color: var(--bs-white);
+  padding-top: 7px;
+  padding-bottom: 14px;
+}

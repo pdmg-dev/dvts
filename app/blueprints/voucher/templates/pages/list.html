@@ -7,8 +7,8 @@
 
 {% block content %}
   <div class="content" id="content">
-    {% include 'vouchers_toolbar.html' %}
-    {% include 'vouchers_table.html' %}
+    {% include 'partials/list_toolbar.html' %}
+    {% include 'partials/table.html' %}
   </div>
 
   {% if show_card %}
@@ -20,5 +20,4 @@
 
 {% block script %}
   <script src="{{ url_for('static', filename='js/vouchers.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/new_voucher.js') }}"></script>
 {% endblock %}

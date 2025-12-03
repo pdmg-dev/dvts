@@ -1,7 +1,7 @@
 <div class="table-split-wrapper">
   <div class="table-container" id="tableContainer">
     <table class="vouchers-table" id="vouchersTable">
-      <tbody>
+      <tbody id="vouchersTableBody">
         {% for voucher in vouchers.items %}
           <tr
             hx-get="{{ url_for('voucher.view_voucher', voucher_id=voucher.id) }}"
@@ -20,11 +20,10 @@
             <td class="particulars-col">
               <span> {{ voucher.particulars }} </span>
             </td>
-            <td class="amount-col">
-              <span> {{ voucher.amount }} </span>
-            </td>
             <td class="status-col"><span>status</span></td>
-            <td class="status-updated-at-col"><span>status_updated_at</span></td>
+            <td class="date-col text-end pe-3 small">
+              <span>{{ voucher.date_received | datetime }}</span>
+            </td>
           </tr>
         {% endfor %}
       </tbody>

@@ -1,6 +1,7 @@
 from flask import render_template, request
 from flask_login import login_required
 
+from app.extensions import db
 from app.models.voucher import DisbursementVoucher
 
 from . import voucher_bp
@@ -20,7 +21,7 @@ def all_vouchers():
     first_item = (vouchers.page - 1) * vouchers.per_page + 1
     last_item = min(vouchers.page * vouchers.per_page, vouchers.total)
 
-    template = "vouchers_partials.html" if request.headers.get("HX-Request") else "vouchers.html"
+    template = "fragments/list_content.html" if request.headers.get("HX-Request") else "pages/list.html"
 
     return render_template(
         template,
@@ -60,11 +61,11 @@ def view_voucher(voucher_id):
     if request.headers.get("HX-Request"):
         layout = request.headers.get("HX-Layout")
         if layout == "split":
-            template = "voucher_detail.html"
+            template = "partials/detail.html"
         else:
-            template = "voucher_partials.html"
+            template = "fragments/detail_content.html"
     else:
-        template = "vouchers.html"
+        template = "pages/detail.html"
 
     return render_template(
         template,
@@ -81,9 +82,8 @@ def view_voucher(voucher_id):
 @login_required
 def new_voucher():
     form = DVForm()
-
     if request.headers.get("HX-Request"):
-        return render_template("new_voucher.html", form=form)
+        return render_template("fragments/form_card.html", form=form)
 
     page = request.args.get("page", 1, type=int)
     per_page = 25
@@ -93,7 +93,7 @@ def new_voucher():
     first_item = (vouchers.page - 1) * vouchers.per_page + 1
     last_item = min(vouchers.page * vouchers.per_page, vouchers.total)
 
-    template = "vouchers.html"
+    template = "pages/list.html"
     return render_template(
         template,
         vouchers=vouchers,
@@ -103,3 +103,39 @@ def new_voucher():
         form=form,
         show_card=True,
     )
+
+
+@voucher_bp.route("/voucher/save", methods=["POST"])
+@login_required
+def save_voucher():
+    form = DVForm()
+
+    if not form.validate_on_submit():
+        return render_template("partials/form.html", form=form)
+
+    existing = DisbursementVoucher.query.filter_by(obr_number=form.obr_number.data).first()
+    if existing:
+        form.obr_number.errors.append("OBR number already exists")
+        return render_template("partials/form.html", form=form)
+
+    voucher = DisbursementVoucher(
+        date_received=form.date_received.data,
+        category=form.category.data,
+        mode_of_payment=form.mode_of_payment.data,
+        dv_number=form.dv_number.data,
+        payee=form.payee.data,
+        obr_number=form.obr_number.data,
+        address=form.address.data,
+        resp_center=form.resp_center.data,
+        particulars=form.particulars.data,
+        amount=form.amount.data,
+    )
+
+    db.session.add(voucher)
+    db.session.commit()
+
+    # Item numbers for pagination (first and last on the current page)
+
+    fresh_form = DVForm(formdata=None)
+
+    return render_template("fragments/voucher_create_response.html", voucher=voucher, form=fresh_form)

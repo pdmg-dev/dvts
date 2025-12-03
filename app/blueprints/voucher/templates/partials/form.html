@@ -2,8 +2,8 @@
   class="d-flex flex-column flex-grow-1"
   id="newVoucherForm"
   hx-post="{{ url_for('voucher.save_voucher') }}"
-  hx-target="#voucherFormContainer"
-  hx-swap="innerHTML"
+  hx-target="#vouchersTableBody"
+  hx-swap="beforeend"
   novalidate
 >
   {{ form.csrf_token() }}
@@ -15,7 +15,7 @@
     <div class="col-sm-5">
       {{
         form.date_received(
-             class="form-control form-control-sm" ~ ('is-invalid' if form.date_received.errors else ''),
+             class="form-control form-control-sm " ~ ('is-invalid' if form.date_received.errors else ''),
              id="dateReceived", type="datetime-local"
         )
       }}
@@ -28,7 +28,7 @@
     <div class="col-sm-3">
       {{
         form.category(
-             class="form-control form-control-sm" ~ ('is-invalid' if form.category.errors else ''),
+             class="form-control form-control-sm " ~ ('is-invalid' if form.category.errors else ''),
              id="category"
         )
       }}

@@ -116,6 +116,10 @@
   overflow: hidden;
 }
 
+.vouchers-table .date-col {
+  width: 85px;
+}
+
 .toolbar.table-scrolled {
   position: sticky;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);

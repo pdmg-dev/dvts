@@ -1,12 +1,23 @@
-initRemoveFile();
+document.addEventListener("DOMContentLoaded", function () {
+    initRemoveFile();
+    closeVoucherCard();
+});
+
+document.addEventListener("htmx:afterSwap", function () {
+    // Check if the swapped content is the new voucher card
+    initRemoveFile();
+    closeVoucherCard();
+});
 
 // For closing the new voucher card
-document
-    .getElementById("closeVoucherCard")
-    .addEventListener("click", function () {
-        document.getElementById("newVoucherCard").remove();
-        history.pushState({}, "", "/vouchers");
-    });
+function closeVoucherCard() {
+    document
+        .getElementById("closeVoucherCard")
+        .addEventListener("click", function () {
+            document.getElementById("newVoucherCard").remove();
+            history.pushState({}, "", "/vouchers");
+        });
+}
 
 function initRemoveFile() {
     const attachment = document.getElementById("attachment");

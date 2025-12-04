@@ -14,7 +14,7 @@ class DisbursementVoucher(db.Model):
     payee = db.Column(db.String(120), nullable=False)
     address = db.Column(db.String(120))
 
-    obr_number = db.Column(db.String(20), unique=True)
+    obr_number = db.Column(db.String(20), unique=True, nullable=True)
     resp_center = db.Column(db.String(20))
 
     particulars = db.Column(db.Text, nullable=False)

@@ -9,12 +9,14 @@
       <input class="form-check-input m-0" type="checkbox" />
     </button>
   </td>
-
-  <td class="payee-col"><span>{{ voucher.payee }}</span></td>
-  <td class="particulars-col"><span>{{ voucher.particulars }}</span></td>
+  <td class="payee-col">
+    <span>{{ voucher.payee }}</span>
+  </td>
+  <td class="particulars-col">
+    <span> {{ voucher.particulars }} </span>
+  </td>
   <td class="status-col"><span>status</span></td>
-
   <td class="date-col text-end pe-3 small">
-    <span>{{ voucher.date_received|datetime }}</span>
+    <span>{{ voucher.date_received | datetime }}</span>
   </td>
 </tr>

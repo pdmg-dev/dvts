@@ -134,8 +134,9 @@ def save_voucher():
     db.session.add(voucher)
     db.session.commit()
 
-    # Item numbers for pagination (first and last on the current page)
-
     fresh_form = DVForm(formdata=None)
+    page = request.args.get("page", 1, type=int)
+    per_page = 25
+    vouchers = DisbursementVoucher.query.paginate(page=page, per_page=per_page, error_out=False)
 
-    return render_template("fragments/create_response.html", voucher=voucher, form=fresh_form)
+    return render_template("partials/form.html", voucher=voucher, form=fresh_form, vouchers=vouchers)

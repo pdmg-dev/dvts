@@ -2,15 +2,15 @@
   class="d-flex flex-column flex-grow-1"
   id="newVoucherForm"
   hx-post="{{ url_for('voucher.save_voucher') }}"
-  hx-target="#vouchersTableBody"
-  hx-swap="beforeend"
+  hx-target="#voucherFormContainer"
+  hx-swap="innerHTML"
   novalidate
 >
   {{ form.csrf_token() }}
   <div class="mb-1 text-muted section-header">System Information</div>
   <hr class="mt-1 mb-3" />
 
-  <div class="row mb-2 d-flex align-items-center">
+  <div class="row mb-2">
     {{ form.date_received.label(class_="col-sm-2 col-form-label col-form-label-sm") }}
     <div class="col-sm-5">
       {{

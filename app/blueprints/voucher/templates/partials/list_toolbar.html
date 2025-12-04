@@ -17,7 +17,7 @@
 
   <button
     class="btn btn-icon"
-    hx-get="{{ url_for('voucher.all_vouchers') }}"
+    hx-get="{{ url_for('voucher.all_vouchers', page=vouchers.page) }}"
     hx-target="#content"
     hx-swap="innerHTML"
     hx-push-url="true"

@@ -3,28 +3,7 @@
     <table class="vouchers-table" id="vouchersTable">
       <tbody id="vouchersTableBody">
         {% for voucher in vouchers.items %}
-          <tr
-            hx-get="{{ url_for('voucher.view_voucher', voucher_id=voucher.id) }}"
-            hx-target="#content"
-            hx-swap="innerHTML"
-            hx-push-url="true"
-          >
-            <td class="select-col ps-1">
-              <button class="form-check btn btn-icon m-0" onclick="event.stopPropagation()">
-                <input class="form-check-input m-0" type="checkbox" />
-              </button>
-            </td>
-            <td class="payee-col">
-              <span>{{ voucher.payee }}</span>
-            </td>
-            <td class="particulars-col">
-              <span> {{ voucher.particulars }} </span>
-            </td>
-            <td class="status-col"><span>status</span></td>
-            <td class="date-col text-end pe-3 small">
-              <span>{{ voucher.date_received | datetime }}</span>
-            </td>
-          </tr>
+          {% include 'partials/row.html' %}
         {% endfor %}
       </tbody>
     </table>

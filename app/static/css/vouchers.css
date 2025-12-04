@@ -116,6 +116,10 @@
   overflow: hidden;
 }
 
+.vouchers-table .status-col {
+  width: 85px;
+}
+
 .vouchers-table .date-col {
   width: 85px;
 }

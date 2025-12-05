@@ -14,7 +14,99 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='tempus/tempus-dominus.min.css') }}" />
 
+    <style>
+      .tempus-dominus-widget *:focus,
+      .tempus-dominus-widget *:focus-visible,
+      .tempus-dominus-widget *:focus-within,
+      .tempus-dominus-widget .btn:focus,
+      .tempus-dominus-widget .btn:focus-visible,
+      .tempus-dominus-widget .date-container *:focus {
+        outline: none !important;
+        box-shadow: none !important;
+      }
+
+      .tempus-dominus-widget {
+        border-radius: 4px;
+        box-shadow:
+          0 1px 3px rgba(0, 0, 0, 0.2),
+          0 1px 3px rgba(0, 0, 0, 0.1),
+          0 0 3px rgba(0, 0, 0, 0.05);
+        list-style: none;
+        font-size: 12px !important;
+        padding: 8px !important;
+        width: 19rem;
+      }
+
+      .tempus-dominus-widget i {
+        -webkit-text-stroke: 0.5px !important;
+      }
+
+      .tempus-dominus-widget .date-container-days {
+        grid-auto-rows: 34px !important;
+      }
+
+      .tempus-dominus-widget .date-container-days .day {
+        height: 32px !important;
+        width: 32px !important;
+        border-radius: 50rem !important;
+        padding: 0 !important;
+        margin: 2px !important;
+      }
+
+      .tempus-dominus-widget .date-container-days .dow {
+        line-height: 2 !important;
+      }
+
+      .tempus-dominus-widget .calendar-header {
+        font-weight: 500 !important;
+      }
+
+      .tempus-dominus-widget .toolbar div {
+        padding: 10px 6px !important;
+      }
+
+      .tempus-dominus-widget .toolbar div {
+        height: 40px !important;
+        width: 80px !important;
+        font-size: 14px !important;
+        border-radius: 50rem !important;
+      }
+
+      .tempus-dominus-widget div.next,
+      .tempus-dominus-widget div.previous {
+        border-radius: 50rem !important;
+        font-size: 14px !important;
+        padding-block: 4px !important;
+      }
+
+      .tempus-dominus-widget div.picker-switch {
+        font-size: 13px !important;
+        padding-block: 4px !important;
+      }
+
+      .tempus-dominus-widget div.next:hover,
+      .tempus-dominus-widget div.previous:hover {
+        background-color: var(--bs-light-border-subtle) !important;
+        border-color: var(--bs-light-border-subtle) !important;
+      }
+
+      .tempus-dominus-widget .toolbar {
+        height: 40px !important;
+      }
+
+      .tempus-dominus-widget .date-container-days .cw {
+        align-items: center;
+        cursor: default;
+        display: flex;
+        font-size: 0.8em;
+        height: 90%;
+        justify-content: center;
+        line-height: 20px;
+        width: 90%;
+      }
+    </style>
     {% block style %}
     {% endblock %}
   </head>
@@ -34,10 +126,13 @@
     {% endblock %}
 
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/htmx.min.js')}}"></script>
     <script src="{{ url_for('static', filename='js/navbar.js')}}"></script>
     <script src="{{ url_for('static', filename='js/sidebar.js')}}"></script>
     <script src="{{ url_for('static', filename='js/new_voucher.js') }}"></script>
+    <script src="{{ url_for('static', filename='tempus/luxon.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='tempus/tempus-dominus.min.js') }}"></script>
 
     {% block script %}
     {% endblock %}

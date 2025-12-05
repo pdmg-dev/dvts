@@ -177,3 +177,11 @@
 .detail-panel.no-transition {
   transition: none !important;
 }
+
+/* Hide the calendar/time icon */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  display: none;
+}

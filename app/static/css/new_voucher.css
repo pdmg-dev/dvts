@@ -88,3 +88,8 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   filter: grayscale(100%);
   opacity: 0.5;
 }
+
+#dateReceivedPicker .bi-calendar {
+  color: var(--bs-gray-dark) !important;
+  -webkit-text-stroke: 0.25px !important;
+}

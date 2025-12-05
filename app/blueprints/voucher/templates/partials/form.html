@@ -13,15 +13,30 @@
   <div class="row mb-2">
     {{ form.date_received.label(class_="col-sm-2 col-form-label col-form-label-sm") }}
     <div class="col-sm-5">
-      {{
-        form.date_received(
-             class="form-control form-control-sm " ~ ('is-invalid' if form.date_received.errors else ''),
-             id="dateReceived", type="datetime-local"
-        )
-      }}
+      <div
+        class="input-group input-group-sm"
+        id="dateReceivedPicker"
+        data-td-target-input="nearest"
+        data-td-target-toggle="nearest"
+      >
+        {{
+          form.date_received(
+              class="form-control form-control-sm " ~ ('is-invalid' if form.date_received.errors else ''),
+              id="dateReceivedInput",
+              **{'data-td-target': '#dateReceivedPicker'}
+          )
+        }}
+
+        <span class="input-group-text" data-td-target="#dateReceivedPicker" data-td-toggle="datetimepicker">
+          <i class="bi bi-calendar"></i>
+        </span>
+      </div>
+
       {% for err in form.date_received.errors %}
         <div class="invalid-feedback">{{ err }}</div>
       {% endfor %}
+
+      <script src="{{ url_for('static', filename='js/datepicker.js')}}"></script>
     </div>
 
     {{ form.category.label(class_="col-sm-2 col-form-label col-form-label-sm") }}

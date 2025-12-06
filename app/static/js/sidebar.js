@@ -13,15 +13,3 @@ function sidebarToggler() {
         sidebar.classList.toggle("collapsed");
     });
 }
-
-function setActiveLink() {
-    // Remove active class from all sidebar links
-    document
-        .querySelectorAll("#sidebar .nav-link.active")
-        .forEach((a) => a.classList.remove("active"));
-
-    // Add active to the clicked link
-    if (evt.detail.requestConfig.elt.matches(".nav-link")) {
-        evt.detail.requestConfig.elt.classList.add("active");
-    }
-}

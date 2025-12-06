@@ -52,12 +52,12 @@
       <hr />
       <li>
         <a
-          href="#"
-          hx-get="{{ url_for('admin.all_categories') }}"
+          href="{{ url_for('admin.category_index') }}"
+          hx-get="{{ url_for('admin.category_index') }}"
           hx-target="#content"
           hx-swap="innerHTML"
           hx-push-url="true"
-          class="nav-link {% if request.endpoint == 'admin.all_categories' %}active{% endif %}"
+          class="nav-link {% if request.endpoint == 'admin.category_index' %}active{% endif %}"
           ><i class="bi bi-tags fs-5"></i>Manage categories</a
         >
       </li>

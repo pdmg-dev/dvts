@@ -1,29 +1,41 @@
 <div class="modal-header">
   {% if action == "delete" %}
-    <h1 class="modal-title fs-5">Delete Category</h1>
+    <h1 class="modal-title fs-5">Remove category</h1>
   {% else %}
-    <h1 class="modal-title fs-5">{% if action == "update" %}Update Category{% else %}Create Category{% endif %}</h1>
+    <h1 class="modal-title fs-5">{% if action == "update" %}Edit category{% else %}New category{% endif %}</h1>
   {% endif %}
   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
 
 <div class="modal-body">
   {% if action == "delete" %}
-    <p>Are you sure you want to delete <strong>{{ category.name }}</strong>?</p>
+    <form
+      hx-post="{{ url_for('admin.category_delete_post', category_id=category.id) }} "
+      hx-target="#modalContent"
+      hx-swap="innerHTML"
+    >
+      <p class="m-0">Are you sure you want to delete <strong>{{ category.name }}</strong>?</p>
+    </form>
   {% else %}
     <form
       id="categoryForm"
       hx-post="{% if action == 'update' %}
-        {{ url_for('admin.update_category', category_id=category_id) }}
+        {{ url_for('admin.category_update_post', category_id=category_id) }}
       {% else %}
-        {{ url_for('admin.create_category') }}
+        {{ url_for('admin.category_create_post') }}
       {% endif %}"
-      hx-target="#categoryModal .modal-content"
+      hx-target="#modalContent"
       hx-swap="innerHTML"
       novalidate
     >
       {{ form.hidden_tag() }}
-      {{ form.name.label(class="form-label") }}
+
+      {% if action == "create" %}
+        <label for="categoryNameInput" class="form-label form-label-sm">Please enter a new category name.</label>
+      {% else %}
+        <label for="categoryNameInput" class="form-label form-label-sm">Category name:</label>
+      {% endif %}
+
       {{ form.name(class="form-control " ~ ('is-invalid' if form.name.errors else ''), id="categoryNameInput") }}
 
       {% for error in form.name.errors %}
@@ -46,21 +58,20 @@
 </div>
 
 <div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
   {% if action == "delete" %}
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
     <button
       type="button"
       class="btn btn-danger"
-      hx-post="{{ url_for('admin.delete_category', category_id=category.id) }}"
-      hx-target="#categoryModal .modal-content"
+      hx-post="{{ url_for('admin.category_delete_post', category_id=category.id) }}"
+      hx-target="#modalContent"
       hx-swap="innerHTML"
     >
       Delete
     </button>
   {% else %}
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
     <button type="submit" class="btn btn-primary" form="categoryForm">
-      {% if action == "update" %}Update{% else %}Create{% endif %}
+      {% if action == "update" %}Save{% else %}Create{% endif %}
     </button>
   {% endif %}
 </div>

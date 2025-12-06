@@ -266,3 +266,24 @@ main .table-container {
   padding-top: 7px;
   padding-bottom: 14px;
 }
+
+.modal.fade .modal-dialog {
+  transition:
+    transform 0.15s ease-out,
+    opacity 0.15s ease-out !important;
+  transform: scale(0.8) translateY(-10px);
+  opacity: 0;
+}
+
+.modal.show .modal-dialog {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.modal.fade-out .modal-dialog {
+  transition:
+    transform 0.15s ease-out,
+    opacity 0.15s ease-out !important;
+  transform: scale(0.8) translateY(-10px);
+  opacity: 0;
+}

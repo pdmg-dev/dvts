@@ -1,0 +1,66 @@
+<div class="modal-header">
+  {% if action == "delete" %}
+    <h1 class="modal-title fs-5">Delete Category</h1>
+  {% else %}
+    <h1 class="modal-title fs-5">{% if action == "update" %}Update Category{% else %}Create Category{% endif %}</h1>
+  {% endif %}
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  {% if action == "delete" %}
+    <p>Are you sure you want to delete <strong>{{ category.name }}</strong>?</p>
+  {% else %}
+    <form
+      id="categoryForm"
+      hx-post="{% if action == 'update' %}
+        {{ url_for('admin.update_category', category_id=category_id) }}
+      {% else %}
+        {{ url_for('admin.create_category') }}
+      {% endif %}"
+      hx-target="#categoryModal .modal-content"
+      hx-swap="innerHTML"
+      novalidate
+    >
+      {{ form.hidden_tag() }}
+      {{ form.name.label(class="form-label") }}
+      {{ form.name(class="form-control " ~ ('is-invalid' if form.name.errors else ''), id="categoryNameInput") }}
+
+      {% for error in form.name.errors %}
+        <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    </form>
+
+    <script>
+      document.getElementById("categoryModal").addEventListener("shown.bs.modal", function () {
+        const input = document.querySelector("#categoryNameInput");
+        if (input) {
+          // Move cursor to the end of the input value
+          input.focus();
+          const length = input.value.length;
+          input.setSelectionRange(length, length);
+        }
+      });
+    </script>
+  {% endif %}
+</div>
+
+<div class="modal-footer">
+  {% if action == "delete" %}
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    <button
+      type="button"
+      class="btn btn-danger"
+      hx-post="{{ url_for('admin.delete_category', category_id=category.id) }}"
+      hx-target="#categoryModal .modal-content"
+      hx-swap="innerHTML"
+    >
+      Delete
+    </button>
+  {% else %}
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    <button type="submit" class="btn btn-primary" form="categoryForm">
+      {% if action == "update" %}Update{% else %}Create{% endif %}
+    </button>
+  {% endif %}
+</div>

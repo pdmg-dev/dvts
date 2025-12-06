@@ -49,6 +49,18 @@
       <li>
         <a href="#" class="nav-link"><i class="bi bi-people fs-5"></i>People</a>
       </li>
+      <hr />
+      <li>
+        <a
+          href="#"
+          hx-get="{{ url_for('admin.all_categories') }}"
+          hx-target="#content"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          class="nav-link {% if request.endpoint == 'admin.all_categories' %}active{% endif %}"
+          ><i class="bi bi-tags fs-5"></i>Manage categories</a
+        >
+      </li>
     </ul>
 
     <ul class="nav flex-column mt-auto mb-3">

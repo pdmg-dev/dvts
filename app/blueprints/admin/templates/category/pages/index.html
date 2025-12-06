@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block style %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/categories.css') }}" />
+{% endblock %}
+
+{% block content %}
+  <div class="content" id="content">
+    {% include 'category/partials/list_toolbar.html' %}
+    <div
+      class="table-container px-3"
+      id="tableContainer"
+      hx-get="{{ url_for('admin.categories_list') }}"
+      hx-trigger="load"
+    ></div>
+
+    <button
+      type="button"
+      class="btn btn-secondary btn-sm"
+      data-bs-toggle="modal"
+      data-bs-target="#categoryModal"
+      hx-get="{{ url_for('admin.categories_create_form') }}"
+      hx-target="#categoryModal .modal-content"
+      hx-swap="innerHTML"
+    >
+      Create new category
+    </button>
+
+    {% include 'category/partials/modal.html' %}
+  </div>
+
+  {% if show_card %}
+    <div id="floatingCardContainer">{% include 'fragments/form_card.html' %}</div>
+  {% else %}
+    <div id="floatingCardContainer"></div>
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='scripts/categories.js') }}"></script>
+{% endblock %}

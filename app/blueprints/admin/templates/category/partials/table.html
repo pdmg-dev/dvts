@@ -1,0 +1,52 @@
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for category in categories %}
+      <tr>
+        <td>{{ category.name }}</td>
+        <td>
+          <button
+            type="button"
+            class="btn btn-link btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#categoryModal"
+            hx-get="{{ url_for('admin.update_category', category_id=category.id) }}"
+            hx-target="#categoryModal .modal-content"
+            hx-swap="innerHTML"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            class="btn btn-link btn-sm text-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#categoryModal"
+            hx-get="{{ url_for('admin.delete_category', category_id=category.id) }}"
+            hx-target="#categoryModal .modal-content"
+            hx-swap="innerHTML"
+          >
+            Remove
+          </button>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div>
+  <button
+    type="button"
+    class="btn btn-secondary btn-sm"
+    data-bs-toggle="modal"
+    data-bs-target="#categoryModal"
+    hx-get="{{ url_for('admin.create_category') }}"
+    hx-target="#categoryModal .modal-content"
+    hx-swap="innerHTML"
+  >
+    Create new category
+  </button>
+</div>

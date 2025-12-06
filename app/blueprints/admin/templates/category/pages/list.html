@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="content" id="content">
+    {% include 'category/partials/list_toolbar.html' %}
+    <div class="table-container px-3" id="tableContainer">{% include 'category/partials/table.html' %}</div>
+    {% include 'category/partials/modal.html' %}
+  </div>
+
+  {% if show_card %}
+    <div id="floatingCardContainer">{% include 'fragments/form_card.html' %}</div>
+  {% else %}
+    <div id="floatingCardContainer"></div>
+  {% endif %}
+{% endblock %}

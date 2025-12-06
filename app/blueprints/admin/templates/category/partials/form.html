@@ -1,0 +1,19 @@
+<form
+  id="categoryForm"
+  hx-post="{% if action == 'update' %}
+    {{ url_for('admin.update_category', category_id=category_id) }}
+  {% else %}
+    {{ url_for('admin.create_category') }}
+  {% endif %}"
+  hx-target="#categoryModal .modal-content"
+  hx-swap="innerHTML"
+  novalidate
+>
+  {{ form.hidden_tag() }}
+  {{ form.name.label(class="form-label") }}
+  {{ form.name(class="form-control " ~ ('is-invalid' if form.name.errors else ''), id="categoryNameInput") }}
+
+  {% for error in form.name.errors %}
+    <div class="invalid-feedback">{{ error }}</div>
+  {% endfor %}
+</form>

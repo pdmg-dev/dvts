@@ -134,6 +134,28 @@
     <script src="{{ url_for('static', filename='tempus/luxon.min.js') }}"></script>
     <script src="{{ url_for('static', filename='tempus/tempus-dominus.min.js') }}"></script>
 
+    <script>
+      document.body.addEventListener("postSuccess", () => {
+        const modalEl = document.getElementById("categoryModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+
+        if (modal) {
+          // Hide modal (animation will run)
+          modal.hide();
+        }
+      });
+    </script>
+    <script>
+      const modalEl = document.getElementById("categoryModal");
+
+      modalEl.addEventListener("hide.bs.modal", () => {
+        modalEl.classList.add("fade-out");
+      });
+
+      modalEl.addEventListener("hidden.bs.modal", () => {
+        modalEl.classList.remove("fade-out");
+      });
+    </script>
     {% block script %}
     {% endblock %}
   </body>

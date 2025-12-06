@@ -7,7 +7,7 @@
     <div class="content-body px-3 d-flex flex-column" style="overflow-y: auto;" id="contentBody">
       {% include 'categories/partials/table.html' %}
     </div>
-    <div class="content-footer">{% include 'categories/fragments/modal.html' %}</div>
+    <div class="content-footer">{% include 'categories/partials/modal.html' %}</div>
   </div>
 
   {% if show_card %}
@@ -16,3 +16,4 @@
     <div id="floatingCardContainer"></div>
   {% endif %}
 {% endblock %}
+

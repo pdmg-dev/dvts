@@ -15,7 +15,7 @@ from .forms import CategoryForm
 def category_index():
     categories = Category.query.order_by(func.lower(Category.name)).all()
     if request.headers.get("HX-Request"):
-        return render_template("categories/partials/content.html", categories=categories)
+        return render_template("categories/fragments/content.html", categories=categories)
     return render_template("categories/index.html", categories=categories)
 
 
@@ -24,7 +24,7 @@ def category_index():
 def category_create():
     form = CategoryForm()
     return render_template(
-        "categories/fragments/content.html",
+        "categories/fragments/modal_content.html",
         action="create",
         form=form,
     )
@@ -45,7 +45,7 @@ def category_create_post():
             200,
             {"HX-Trigger": "postSuccess"},
         )
-    return render_template("categories/fragments/content.html", form=form, action="create")
+    return render_template("categories/fragments/modal_content.html", form=form, action="create")
 
 
 @admin_bp.get("/categories/update/<int:category_id>")
@@ -54,7 +54,7 @@ def category_update(category_id):
     category = Category.query.get_or_404(category_id)
     form = CategoryForm(obj=category)
     return render_template(
-        "categories/fragments/content.html",
+        "categories/fragments/modal_content.html",
         action="update",
         form=form,
         category_id=category.id,
@@ -77,7 +77,7 @@ def category_update_post(category_id):
             {"HX-Trigger": "postSuccess"},
         )
     return render_template(
-        "categories/fragments/content.html",
+        "categories/fragments/modal_content.html",
         form=form,
         action="update",
         category_id=category.id,
@@ -89,7 +89,7 @@ def category_update_post(category_id):
 def category_delete(category_id):
     category = Category.query.get_or_404(category_id)
     return render_template(
-        "categories/fragments/content.html",
+        "categories/fragments/modal_content.html",
         action="delete",
         category=category,
     )

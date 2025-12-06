@@ -1,6 +1,6 @@
 <div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
+    <div class="modal-content" id="modalContent">
       <div class="modal-header">
         <h5 class="modal-title" id="modalTitle"></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -15,11 +15,3 @@
     </div>
   </div>
 </div>
-
-<script>
-  document.body.addEventListener("postSuccess", () => {
-    const modalEl = document.getElementById("categoryModal");
-    const modal = bootstrap.Modal.getInstance(modalEl);
-    if (modal) modal.hide();
-  });
-</script>

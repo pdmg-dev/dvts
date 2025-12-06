@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 
-from .blueprints import auth_bp, voucher_bp
+from .blueprints import admin_bp, auth_bp, voucher_bp
 from .config import get_config
 from .extensions import bcrypt, db, login_manager, migrate, socketio
 from .filters import init_filters
@@ -28,6 +28,7 @@ def create_app(config_class=None):
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(voucher_bp)
+    app.register_blueprint(admin_bp)
 
     @app.route("/")
     def index():

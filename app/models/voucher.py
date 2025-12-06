@@ -23,7 +23,28 @@ class DisbursementVoucher(db.Model):
     attachment = db.Column(db.String(120))
 
     date_received = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    category = db.Column(db.String(20))
+
+    category_id = db.Column(db.ForeignKey("categories.id", name="fk_vouchers_category_id", ondelete="SET NULL"))
+    category = db.relationship("Category", back_populates="vouchers", lazy="selectin")
 
     def __repr__(self):
         return f"<Voucher: {self.payee} | {self.amount}>"
+
+
+class Category(db.Model):
+    __tablename__ = "categories"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+
+    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    vouchers = db.relationship("DisbursementVoucher", back_populates="category", passive_deletes=True)
+
+    def __repr__(self):
+        return f"<Category: {self.name}>"

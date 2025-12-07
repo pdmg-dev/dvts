@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, redirect, url_for
 
 from .blueprints import admin_bp, auth_bp, voucher_bp
 from .config import get_config
@@ -32,6 +32,6 @@ def create_app(config_class=None):
 
     @app.route("/")
     def index():
-        return render_template("base.html")
+        return redirect(url_for("voucher.all_vouchers"))
 
     return app

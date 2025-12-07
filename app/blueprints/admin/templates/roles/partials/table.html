@@ -1,7 +1,7 @@
 <table>
   <thead>
     <tr>
-      <th>Category</th>
+      <th>Role</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -12,24 +12,24 @@
           class="btn btn-secondary btn-sm"
           data-bs-toggle="modal"
           data-bs-target="#adminModal"
-          hx-get="{{ url_for('admin.category_create') }}"
+          hx-get="{{ url_for('admin.role_create') }}"
           hx-target="#modalContent"
           hx-swap="innerHTML"
         >
-          Create new category
+          Create new role
         </button>
       </td>
     </tr>
-    {% for category in categories %}
+    {% for role in roles %}
       <tr>
-        <td>{{ category.name }}</td>
+        <td>{{ role.name }}</td>
         <td>
           <button
             type="button"
             class="btn btn-link btn-sm"
             data-bs-toggle="modal"
             data-bs-target="#adminModal"
-            hx-get="{{ url_for('admin.category_update', category_id=category.id) }}"
+            hx-get="{{ url_for('admin.role_update', role_id=role.id) }}"
             hx-target="#modalContent"
             hx-swap="innerHTML"
           >
@@ -40,7 +40,7 @@
             class="btn btn-link btn-sm text-danger"
             data-bs-toggle="modal"
             data-bs-target="#adminModal"
-            hx-get="{{ url_for('admin.category_delete', category_id=category.id) }}"
+            hx-get="{{ url_for('admin.role_delete', role_id=role.id) }}"
             hx-target="#modalContent"
             hx-swap="innerHTML"
           >

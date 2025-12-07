@@ -4,10 +4,118 @@ from flask_login import login_required
 from sqlalchemy import func
 
 from app.extensions import db
+from app.models.user import Role
 from app.models.voucher import Category
 
 from . import admin_bp
-from .forms import CategoryForm
+from .forms import CategoryForm, RoleForm
+
+
+@admin_bp.get("/users")
+@login_required
+def user_index():
+    # Placeholder for user index route
+    return "User Index Page"
+
+
+@admin_bp.get("/roles")
+@login_required
+def role_index():
+    roles = Role.query.order_by(func.lower(Role.name)).all()
+    if request.headers.get("HX-Request"):
+        return render_template("roles/fragments/content.html", roles=roles)
+    return render_template("roles/index.html", roles=roles)
+
+
+@admin_bp.get("/roles/create")
+@login_required
+def role_create():
+    form = RoleForm()
+    return render_template(
+        "roles/fragments/modal_content.html",
+        action="create",
+        form=form,
+    )
+
+
+@admin_bp.post("/roles/create")
+@login_required
+def role_create_post():
+    form = RoleForm()
+    if form.validate_on_submit():
+        role = Role(name=form.name.data.strip())
+        db.session.add(role)
+        db.session.commit()
+
+        roles = Role.query.order_by(func.lower(Role.name)).all()
+        return (
+            render_template("roles/fragments/response.html", roles=roles),
+            200,
+            {"HX-Trigger": "postSuccess"},
+        )
+    return render_template("roles/fragments/modal_content.html", form=form, action="create")
+
+
+@admin_bp.get("/roles/update/<int:role_id>")
+@login_required
+def role_update(role_id):
+    role = Role.query.get_or_404(role_id)
+    form = RoleForm(obj=role)
+    return render_template(
+        "roles/fragments/modal_content.html",
+        action="update",
+        form=form,
+        role_id=role.id,
+    )
+
+
+@admin_bp.post("/roles/update/<int:role_id>")
+@login_required
+def role_update_post(role_id):
+    role = Role.query.get_or_404(role_id)
+    form = RoleForm()
+    if form.validate_on_submit():
+        form.populate_obj(role)
+        db.session.commit()
+
+        roles = Role.query.order_by(func.lower(Role.name)).all()
+        return (
+            render_template("roles/fragments/response.html", roles=roles),
+            200,
+            {"HX-Trigger": "postSuccess"},
+        )
+    return render_template(
+        "roles/fragments/modal_content.html",
+        form=form,
+        action="update",
+        role_id=role.id,
+    )
+
+
+@admin_bp.get("/roles/delete/<int:role_id>")
+@login_required
+def role_delete(role_id):
+    role = Role.query.get_or_404(role_id)
+    return render_template(
+        "roles/fragments/modal_content.html",
+        action="delete",
+        role=role,
+    )
+
+
+@admin_bp.post("/roles/delete/<int:role_id>")
+@login_required
+def role_delete_post(role_id):
+    role = Role.query.get_or_404(role_id)
+    db.session.delete(role)
+    db.session.commit()
+
+    roles = Role.query.order_by(func.lower(Role.name)).all()
+    return (
+        render_template("roles/fragments/response.html", roles=roles),
+        200,
+        {"HX-Trigger": "postSuccess"},
+    )
 
 
 @admin_bp.get("/categories")
@@ -108,3 +216,10 @@ def category_delete_post(category_id):
         200,
         {"HX-Trigger": "postSuccess"},
     )
+
+
+@admin_bp.get("/offices")
+@login_required
+def office_index():
+    # Placeholder for office index route
+    return "Office Index Page"

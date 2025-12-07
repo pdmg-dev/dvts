@@ -1,8 +1,8 @@
 <div class="modal-header">
   {% if action == "delete" %}
-    <h1 class="modal-title fs-5">Remove category</h1>
+    <h1 class="modal-title fs-5">Remove role</h1>
   {% else %}
-    <h1 class="modal-title fs-5">{% if action == "update" %}Edit category{% else %}New category{% endif %}</h1>
+    <h1 class="modal-title fs-5">{% if action == "update" %}Edit role{% else %}New role{% endif %}</h1>
   {% endif %}
   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
@@ -10,19 +10,19 @@
 <div class="modal-body">
   {% if action == "delete" %}
     <form
-      hx-post="{{ url_for('admin.category_delete_post', category_id=category.id) }} "
+      hx-post="{{ url_for('admin.role_delete_post', role_id=role.id) }} "
       hx-target="#modalContent"
       hx-swap="innerHTML"
     >
-      <p class="m-0">Are you sure you want to delete <strong>{{ category.name }}</strong>?</p>
+      <p class="m-0">Are you sure you want to delete <strong>{{ role.name }}</strong>?</p>
     </form>
   {% else %}
     <form
-      id="categoryForm"
+      id="roleForm"
       hx-post="{% if action == 'update' %}
-        {{ url_for('admin.category_update_post', category_id=category_id) }}
+        {{ url_for('admin.role_update_post', role_id=role_id) }}
       {% else %}
-        {{ url_for('admin.category_create_post') }}
+        {{ url_for('admin.role_create_post') }}
       {% endif %}"
       hx-target="#modalContent"
       hx-swap="innerHTML"
@@ -31,12 +31,12 @@
       {{ form.hidden_tag() }}
 
       {% if action == "create" %}
-        <label for="categoryNameInput" class="form-label form-label-sm">Please enter a new category name.</label>
+        <label for="roleNameInput" class="form-label form-label-sm">Please enter a new role name.</label>
       {% else %}
-        <label for="categoryNameInput" class="form-label form-label-sm">Category name:</label>
+        <label for="roleNameInput" class="form-label form-label-sm">Role name:</label>
       {% endif %}
 
-      {{ form.name(class="form-control " ~ ('is-invalid' if form.name.errors else ''), id="categoryNameInput") }}
+      {{ form.name(class="form-control " ~ ('is-invalid' if form.name.errors else ''), id="roleNameInput") }}
 
       {% for error in form.name.errors %}
         <div class="invalid-feedback">{{ error }}</div>
@@ -45,7 +45,7 @@
 
     <script>
       document.getElementById("adminModal").addEventListener("shown.bs.modal", function () {
-        const input = document.querySelector("#categoryNameInput");
+        const input = document.querySelector("#roleNameInput");
         if (input) {
           // Move cursor to the end of the input value
           input.focus();
@@ -63,14 +63,14 @@
     <button
       type="button"
       class="btn btn-danger"
-      hx-post="{{ url_for('admin.category_delete_post', category_id=category.id) }}"
+      hx-post="{{ url_for('admin.role_delete_post', role_id=role.id) }}"
       hx-target="#modalContent"
       hx-swap="innerHTML"
     >
       Delete
     </button>
   {% else %}
-    <button type="submit" class="btn btn-primary" form="categoryForm">
+    <button type="submit" class="btn btn-primary" form="roleForm" id="modalActionBtn">
       {% if action == "update" %}Save{% else %}Create{% endif %}
     </button>
   {% endif %}

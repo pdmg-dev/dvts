@@ -141,7 +141,7 @@
 
     <script>
       document.body.addEventListener("postSuccess", () => {
-        const modalEl = document.getElementById("categoryModal");
+        const modalEl = document.getElementById("adminModal");
         const modal = bootstrap.Modal.getInstance(modalEl);
 
         if (modal) {
@@ -151,7 +151,7 @@
       });
     </script>
     <script>
-      const modalEl = document.getElementById("categoryModal");
+      const modalEl = document.getElementById("adminModal");
 
       modalEl.addEventListener("hide.bs.modal", () => {
         modalEl.classList.add("fade-out");

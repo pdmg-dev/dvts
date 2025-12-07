@@ -1,0 +1,79 @@
+<div class="modal-header">
+  {% if action == "delete" %}
+    <h1 class="modal-title fs-5">Remove office</h1>
+  {% else %}
+    <h1 class="modal-title fs-5">{% if action == "update" %}Edit office{% else %}New office{% endif %}</h1>
+  {% endif %}
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  {% if action == "delete" %}
+    <form
+      hx-post="{{ url_for('admin.office_delete', office_id=office.id) }} "
+      hx-target="#modalContent"
+      hx-swap="innerHTML"
+    >
+      <p class="m-0">Are you sure you want to delete <strong>{{ office.name }}</strong>?</p>
+    </form>
+  {% else %}
+    <form
+      id="officeForm"
+      hx-post="{% if action == 'update' %}
+        {{ url_for('admin.office_update_post', office_id=office_id) }}
+      {% else %}
+        {{ url_for('admin.office_create_post') }}
+      {% endif %}"
+      hx-target="#modalContent"
+      hx-swap="innerHTML"
+      novalidate
+    >
+      {{ form.hidden_tag() }}
+
+      {% if action == "create" %}
+        <label for="officeNameInput" class="form-label form-label-sm">Please enter a new office name.</label>
+      {% else %}
+        <label for="officeNameInput" class="form-label form-label-sm">Office name:</label>
+      {% endif %}
+
+      {{ form.name(class="form-control mb-2 " ~ ('is-invalid' if form.name.errors else ''), id="officeNameInput") }}
+      {{ form.acronym(class="form-control mb-2 " ~ ('is-invalid' if form.acronym.errors else ''), id="officeAcronymInput", placeholder="Acronym (optional)") }}
+      {{ form.code(class="form-control " ~ ('is-invalid' if form.code.errors else ''), id="officeCodeInput", placeholder="Code (optional)") }}
+
+      {% for error in form.errors %}
+        <div class="invalid-feedback">{{ error }}</div>
+      {% endfor %}
+    </form>
+
+    <script>
+      document.getElementById("adminModal").addEventListener("shown.bs.modal", function () {
+        const input = document.querySelector("#officeNameInput");
+        if (input) {
+          // Move cursor to the end of the input value
+          input.focus();
+          const length = input.value.length;
+          input.setSelectionRange(length, length);
+        }
+      });
+    </script>
+  {% endif %}
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  {% if action == "delete" %}
+    <button
+      type="button"
+      class="btn btn-danger"
+      hx-post="{{ url_for('admin.office_delete_post', office_id=office.id) }}"
+      hx-target="#modalContent"
+      hx-swap="innerHTML"
+    >
+      Delete
+    </button>
+  {% else %}
+    <button type="submit" class="btn btn-primary" form="officeForm">
+      {% if action == "update" %}Save{% else %}Create{% endif %}
+    </button>
+  {% endif %}
+</div>

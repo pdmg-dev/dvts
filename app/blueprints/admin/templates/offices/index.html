@@ -1,0 +1,18 @@
+{# app/blueprints/admin/templates/offices/index.html #}
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="content" id="content">
+    <div class="content-header px-3">{% include 'offices/partials/toolbar.html' %}</div>
+    <div class="content-body px-3 d-flex flex-column" style="overflow-y: auto;" id="contentBody">
+      {% include 'offices/partials/table.html' %}
+    </div>
+    <div class="content-footer">{% include 'offices/partials/modal.html' %}</div>
+  </div>
+
+  {% if show_card %}
+    <div id="floatingCardContainer">{% include 'fragments/form_card.html' %}</div>
+  {% else %}
+    <div id="floatingCardContainer"></div>
+  {% endif %}
+{% endblock %}

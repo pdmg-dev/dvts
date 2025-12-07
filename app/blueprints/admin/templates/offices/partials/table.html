@@ -1,0 +1,53 @@
+<table>
+  <thead>
+    <tr>
+      <th>Office</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <button
+          class="btn btn-secondary btn-sm"
+          data-bs-toggle="modal"
+          data-bs-target="#adminModal"
+          hx-get="{{ url_for('admin.office_create') }}"
+          hx-target="#modalContent"
+          hx-swap="innerHTML"
+        >
+          Create new office
+        </button>
+      </td>
+    </tr>
+    {% for office in offices %}
+      <tr>
+        <td>{{ office.name }} {% if office.acronym %}({{ office.acronym }}){% endif %}</td>
+        <td>
+          <button
+            type="button"
+            class="btn btn-link btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#adminModal"
+            hx-get="{{ url_for('admin.office_update', office_id=office.id) }}"
+            hx-target="#modalContent"
+            hx-swap="innerHTML"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            class="btn btn-link btn-sm text-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#adminModal"
+            hx-get="{{ url_for('admin.office_delete', office_id=office.id) }}"
+            hx-target="#modalContent"
+            hx-swap="innerHTML"
+          >
+            Remove
+          </button>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

@@ -121,6 +121,11 @@
     {% block main %}
       <main class="d-flex position-absolute me-3 mb-3 overflow-hidden">
         {% block content %}
+          {% if show_card %}
+            <div id="floatingCardContainer">{% include 'fragments/form_card.html' %}</div>
+          {% else %}
+            <div id="floatingCardContainer"></div>
+          {% endif %}
         {% endblock %}
       </main>
     {% endblock %}

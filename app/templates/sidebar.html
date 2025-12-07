@@ -110,3 +110,33 @@
     </div>
   </nav>
 </aside>
+
+<script>
+  function initNavLinkActiveState() {
+    // Get current path from the browser
+    const currentPath = window.location.pathname;
+
+    // Loop through all nav links
+    document.querySelectorAll("#sidebar .nav-link").forEach((link) => {
+      const href = link.getAttribute("hx-get") || link.getAttribute("href");
+
+      if (href && currentPath === href) {
+        // Remove active from others
+        document.querySelectorAll("#sidebar .nav-link.active").forEach((activeLink) => {
+          activeLink.classList.remove("active");
+        });
+
+        // Add active to the matching link
+        link.classList.add("active");
+      }
+    });
+  }
+
+  document.addEventListener("htmx:afterSwap", function () {
+    initNavLinkActiveState();
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    initNavLinkActiveState();
+  });
+</script>

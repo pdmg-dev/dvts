@@ -82,16 +82,11 @@ aside.collapsed {
   cursor: pointer;
 }
 
-.nav-link:focus,
-.nav-link:focus .bi,
-.nav-link:focus span {
-  color: var(--bs-primary-text-emphasis) !important;
-  font-weight: 500;
-  box-shadow: none;
-}
-
 .nav-link:focus {
-  background-color: var(--bs-primary-bg-subtle) !important;
+  background-color: var(--bs-light-border-subtle) !important;
+  border-color: var(--bs-light-border-subtle) !important;
+  color: var(--bs-black);
+  box-shadow: none;
 }
 
 .nav-link.active,

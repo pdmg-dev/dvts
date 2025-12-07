@@ -1,10 +1,5 @@
 {% extends 'base.html' %}
 
-{% block style %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/vouchers.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/new_voucher.css') }}" />
-{% endblock %}
-
 {% block content %}
   <div class="content" id="content">
     {% include 'partials/list_toolbar.html' %}
@@ -16,8 +11,4 @@
   {% else %}
     <div id="floatingCardContainer"></div>
   {% endif %}
-{% endblock %}
-
-{% block script %}
-  <script src="{{ url_for('static', filename='js/vouchers.js') }}"></script>
 {% endblock %}

@@ -12,7 +12,7 @@
       <i class="bi bi-plus fs-2"></i>
       <span class="fw-medium">New Voucher</span>
     </button>
-    <div class="scrollable-sidebar">
+    <div class="scrollable-sidebar d-flex flex-column flex-grow-1">
       <ul class="nav flex-column mt-2">
         <li>
           <a
@@ -58,7 +58,7 @@
             hx-swap="innerHTML"
             hx-push-url="true"
             class="nav-link {% if request.endpoint == 'admin.user_index' %}active{% endif %}"
-            ><i class="bi bi-people fs-5"></i>Manage users</a
+            ><i class="bi bi-person-gear fs-5"></i>Manage users</a
           >
         </li>
         <li>
@@ -69,7 +69,7 @@
             hx-swap="innerHTML"
             hx-push-url="true"
             class="nav-link {% if request.endpoint == 'admin.role_index' %}active{% endif %}"
-            ><i class="bi bi-lock fs-5"></i>Manage roles</a
+            ><i class="bi bi-shield-lock fs-5"></i>Manage roles</a
           >
         </li>
         <li>
@@ -80,7 +80,7 @@
             hx-swap="innerHTML"
             hx-push-url="true"
             class="nav-link {% if request.endpoint == 'admin.office_index' %}active{% endif %}"
-            ><i class="bi bi-building fs-5"></i>Manage offices</a
+            ><i class="bi bi-building-gear fs-5"></i>Manage offices</a
           >
         </li>
         <li>
@@ -91,7 +91,7 @@
             hx-swap="innerHTML"
             hx-push-url="true"
             class="nav-link {% if request.endpoint == 'admin.category_index' %}active{% endif %}"
-            ><i class="bi bi-tags fs-5"></i>Manage categories</a
+            ><i class="bi bi-tag fs-5"></i>Manage categories</a
           >
         </li>
       </ul>

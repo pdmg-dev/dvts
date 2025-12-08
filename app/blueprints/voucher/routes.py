@@ -124,7 +124,7 @@ def save_voucher():
         mode_of_payment=form.mode_of_payment.data,
         dv_number=form.dv_number.data,
         payee=form.payee.data,
-        obr_number=form.obr_number.data,
+        obr_number=form.obr_number.data.strip() or None,
         address=form.address.data,
         resp_center=form.resp_center.data,
         particulars=form.particulars.data,

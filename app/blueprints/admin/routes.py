@@ -248,7 +248,9 @@ def office_create_post():
     form = OfficeForm()
     if form.validate_on_submit():
         office = ResponsibilityCenter(
-            name=form.name.data.strip(), acronym=form.acronym.data.strip(), code=form.code.data.strip()
+            name=form.name.data.strip(),
+            acronym=form.acronym.data.strip() or None,
+            code=form.code.data.strip() or None,
         )
         db.session.add(office)
         db.session.commit()
@@ -281,7 +283,9 @@ def office_update_post(office_id):
     office = ResponsibilityCenter.query.get_or_404(office_id)
     form = OfficeForm()
     if form.validate_on_submit():
-        form.populate_obj(office)
+        office.name = form.name.data.strip()
+        office.acronym = form.acronym.data.strip() or None
+        office.code = form.code.data.strip() or None
         db.session.commit()
 
         offices = ResponsibilityCenter.query.order_by(func.lower(ResponsibilityCenter.name)).all()

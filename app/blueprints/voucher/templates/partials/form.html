@@ -39,15 +39,33 @@
       <script src="{{ url_for('static', filename='js/datepicker.js')}}"></script>
     </div>
 
-    {{ form.category.label(class_="col-sm-2 col-form-label col-form-label-sm") }}
+    {{ form.category_id.label(class_="col-sm-2 col-form-label col-form-label-sm") }}
     <div class="col-sm-3">
-      {{
-        form.category(
-             class="form-control form-control-sm " ~ ('is-invalid' if form.category.errors else ''),
-             id="category"
-        )
-      }}
-      {% for err in form.category.errors %}
+      <input
+        type="hidden"
+        name="category_id"
+        id="category"
+        value="{% if form.category_id.data %}{{ form.category_id.data }}{% else %}{{ 0 }}{% endif %}"
+      />
+      <div class="dropdown w-100">
+        <input
+          type="text"
+          id="categoryInput"
+          class="form-control form-control-sm {{ 'is-invalid' if form.category_id.errors else '' }}"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          autocomplete="off"
+          value="{% if form.category_id.data %}{{ dict(form.category_id.choices).get(form.category_id.data) }}{% endif %}"
+        />
+        <ul class="dropdown-menu w-100" id="categoryMenu">
+          {% for value, label in form.category_id.choices %}
+            <li>
+              <a class="dropdown-item category-option" href="#" data-value="{{ value }}"> {{ label }} </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% for err in form.category_id.errors %}
         <div class="invalid-feedback">{{ err }}</div>
       {% endfor %}
     </div>
@@ -144,14 +162,14 @@
       {% endfor %}
     </div>
 
-    {{ form.resp_center.label(class_="col-sm-2 col-form-label-sm") }}
+    {{ form.resp_center_id.label(class_="col-sm-2 col-form-label-sm") }}
     <div class="col-sm-3">
       {{
-        form.resp_center(
-             class="form-control form-select-sm " ~ ('is-invalid' if form.resp_center.errors else ''),
+        form.resp_center_id(
+             class="form-select form-select-sm form-control " ~ ('is-invalid' if form.resp_center_id.errors else ''),
         )
       }}
-      {% for err in form.resp_center.errors %}
+      {% for err in form.resp_center_id.errors %}
         <div class="invalid-feedback">{{ err }}</div>
       {% endfor %}
     </div>

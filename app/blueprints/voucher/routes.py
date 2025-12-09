@@ -1,4 +1,4 @@
-from flask import render_template, request
+from flask import current_app, render_template, request
 from flask_login import login_required
 
 from app.extensions import db
@@ -15,7 +15,9 @@ def all_vouchers():
     # Pagination setup
     page = request.args.get("page", 1, type=int)
     per_page = 25
-    vouchers = DisbursementVoucher.query.paginate(page=page, per_page=per_page, error_out=False)
+    vouchers = DisbursementVoucher.query.order_by(DisbursementVoucher.date_received.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
 
     # Item numbers for pagination (first and last on the current page)
     first_item = (vouchers.page - 1) * vouchers.per_page + 1
@@ -41,7 +43,9 @@ def view_voucher(voucher_id):
     # Pagination setup
     page = request.args.get("page", 1, type=int)
     per_page = 25
-    vouchers = DisbursementVoucher.query.paginate(page=page, per_page=per_page, error_out=False)
+    vouchers = DisbursementVoucher.query.order_by(DisbursementVoucher.date_received.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
 
     # Calculate the item number of the current voucher
     current_voucher = (
@@ -87,7 +91,9 @@ def new_voucher():
 
     page = request.args.get("page", 1, type=int)
     per_page = 25
-    vouchers = DisbursementVoucher.query.paginate(page=page, per_page=per_page, error_out=False)
+    vouchers = DisbursementVoucher.query.order_by(DisbursementVoucher.date_received.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
 
     total_vouchers = vouchers.total
     first_item = (vouchers.page - 1) * vouchers.per_page + 1
@@ -118,15 +124,17 @@ def save_voucher():
         form.obr_number.errors.append("OBR number already exists")
         return render_template("partials/form.html", form=form)
 
+    current_app.logger.info(f"Category ID received: {form.category_id.data} ")
+
     voucher = DisbursementVoucher(
         date_received=form.date_received.data,
-        category=form.category.data,
+        category_id=form.category_id.data,
         mode_of_payment=form.mode_of_payment.data,
         dv_number=form.dv_number.data,
         payee=form.payee.data,
         obr_number=form.obr_number.data.strip() or None,
         address=form.address.data,
-        resp_center=form.resp_center.data,
+        resp_center_id=form.resp_center_id.data,
         particulars=form.particulars.data,
         amount=form.amount.data,
     )
@@ -137,6 +145,8 @@ def save_voucher():
     fresh_form = DVForm(formdata=None)
     page = request.args.get("page", 1, type=int)
     per_page = 25
-    vouchers = DisbursementVoucher.query.paginate(page=page, per_page=per_page, error_out=False)
+    vouchers = DisbursementVoucher.query.order_by(DisbursementVoucher.date_received.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
 
     return render_template("partials/form.html", voucher=voucher, form=fresh_form, vouchers=vouchers)

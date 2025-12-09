@@ -1,8 +1,10 @@
 // Initialize all functionalities on page load
-initSelectAllVouchers();
-initTableScroll();
-initSplitLayout();
-initTableArrowNavigation();
+document.addEventListener("DOMContentLoaded", function () {
+    initSelectAllVouchers();
+    initTableScroll();
+    initSplitLayout();
+    initTableArrowNavigation();
+});
 
 // Re-initialize functionalities after HTMX content swap
 document.addEventListener("htmx:afterSwap", (evt) => {
@@ -21,15 +23,20 @@ document.addEventListener("htmx:afterSwap", (evt) => {
 // Select All Vouchers
 function initSelectAllVouchers() {
     const selectAllBtn = document.getElementById("selectAllBtn");
-    const selectAllCbx = selectAllBtn.querySelector('input[type="checkbox"]');
-
     const vouchersTable = document.getElementById("vouchersTable");
+
+    // Guard against missing elements
+    if (!selectAllBtn || !vouchersTable) return;
+
+    const selectAllCbx = selectAllBtn.querySelector('input[type="checkbox"]');
     const selectBtns = vouchersTable.querySelectorAll("button");
     const selectCbxs = vouchersTable.querySelectorAll('input[type="checkbox"]');
 
-    const dropdownMenu = document
-        .getElementById("selectAllDropdown")
-        .querySelector(".dropdown-menu");
+    const selectAllDropdown = document.getElementById("selectAllDropdown");
+    if (!selectAllDropdown) return;
+
+    const dropdownMenu = selectAllDropdown.querySelector(".dropdown-menu");
+    if (!dropdownMenu) return;
 
     // Select All button
     selectAllBtn.addEventListener("click", (e) => {
@@ -88,6 +95,9 @@ function initTableScroll() {
     const tableContainer = document.querySelector(".table-container");
     const toolbar = document.querySelector(".toolbar");
 
+    // Guard against missing elements
+    if (!tableContainer || !toolbar) return;
+
     tableContainer.addEventListener("scroll", () => {
         // Add or remove class based on scroll position
         if (tableContainer.scrollTop > 0) {
@@ -102,9 +112,17 @@ function initTableScroll() {
 function initSplitLayout() {
     const splitBtn = document.getElementById("splitBtn");
     const splitWrapper = document.querySelector(".table-split-wrapper");
-    const rows = document.querySelectorAll("#vouchersTable tr");
+
+    // Guard against missing elements
+    if (!splitBtn || !splitWrapper) return;
+
     const tableContainer = splitWrapper.querySelector(".table-container");
     const detailPanel = splitWrapper.querySelector(".detail-panel");
+    const vouchersTable = document.getElementById("vouchersTable");
+
+    if (!tableContainer || !detailPanel || !vouchersTable) return;
+
+    const rows = vouchersTable.querySelectorAll("tr");
 
     // Apply layout state to wrapper, button, and rows
     function applyLayout(active) {
@@ -146,7 +164,12 @@ function initSplitLayout() {
 }
 
 function initTableArrowNavigation() {
-    const rows = document.querySelectorAll("#vouchersTable tbody tr");
+    const vouchersTable = document.getElementById("vouchersTable");
+
+    // Guard against missing table
+    if (!vouchersTable) return;
+
+    const rows = vouchersTable.querySelectorAll("tbody tr");
     if (!rows.length) return;
 
     // Ensure rows are focusable

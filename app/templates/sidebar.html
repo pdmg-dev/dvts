@@ -4,10 +4,12 @@
     <button
       type="button"
       class="btn btn-primary btn-main d-flex align-items-center justify-content-center gap-1 mt-1 mb-2"
+      href="{{ url_for('voucher.new_voucher') }}"
       hx-get="{{ url_for('voucher.new_voucher') }}"
       hx-target="#floatingCardContainer"
       hx-swap="innerHTML"
       hx-push-url="true"
+      hx-trigger="click[!document.getElementById('floatingCardContainer')?.textContent.trim()]"
     >
       <i class="bi bi-plus fs-2"></i>
       <span class="fw-medium">New Voucher</span>

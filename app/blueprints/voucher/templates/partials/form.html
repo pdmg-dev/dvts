@@ -60,7 +60,7 @@
         <ul class="dropdown-menu w-100" id="categoryMenu">
           {% for value, label in form.category_id.choices %}
             <li>
-              <a class="dropdown-item category-option" href="#" data-value="{{ value }}"> {{ label }} </a>
+              <button type="button" class="dropdown-item category-option" data-value="{{ value }}">{{ label }}</button>
             </li>
           {% endfor %}
         </ul>
@@ -162,13 +162,36 @@
       {% endfor %}
     </div>
 
-    {{ form.resp_center_id.label(class_="col-sm-2 col-form-label-sm") }}
+    {{ form.resp_center_id.label(class_="col-sm-2 col-form-label col-form-label-sm") }}
     <div class="col-sm-3">
-      {{
-        form.resp_center_id(
-             class="form-select form-select-sm form-control " ~ ('is-invalid' if form.resp_center_id.errors else ''),
-        )
-      }}
+      <input type="hidden" 
+      id="respCenterId" 
+      name="resp_center_id" 
+      value="{% if form.resp_center_id.data %}{{ form.resp_center_id.data }}{% else %}{{ 0 }}{% endif %}">
+
+      <div class="dropdown w-100">
+        <input
+          type="text"
+          id="respCenterInput"
+          class="form-control form-control-sm {{ 'is-invalid' if form.resp_center_id.errors else '' }}"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+          autocomplete="off"
+          value="{% if form.resp_center_id.data %}{{ dict(form.resp_center_id.choices).get(form.resp_center_id.data) }}{% endif %}"
+        />
+        <ul class="dropdown-menu" id="respCenterMenu">
+          {% for value, label in form.resp_center_id.choices %}
+            {% set rc = form._resp_centers.get(value) %}
+            <li>
+              <button 
+              type="button" 
+              class="dropdown-item resp-center-option" 
+              data-value="{{ value }}"
+              data-code="{% if rc %}{{ rc.code }}{% endif %}"
+              data-acronym="{% if rc %}{{ rc.acronym }}{% endif %}">{{ label }}</button>
+            </li>
+          {% endfor %}
+      </div>
       {% for err in form.resp_center_id.errors %}
         <div class="invalid-feedback">{{ err }}</div>
       {% endfor %}
@@ -202,3 +225,5 @@
     </div>
   </div>
 </form>
+
+<script src="{{ url_for('static', filename='js/form.js') }}"></script>

@@ -24,7 +24,7 @@ class DVForm(FlaskForm):
     address = StringField("Address", validators=[Length(max=120)])
 
     obr_number = StringField("OBR No.", validators=[Length(max=20)])
-    resp_center_id = SelectField("Office", coerce=int)
+    resp_center_id = SelectField("Office", coerce=int, validate_choice=False)
 
     particulars = TextAreaField("Particulars", validators=[InputRequired()])
     amount = DecimalField(
@@ -42,9 +42,9 @@ class DVForm(FlaskForm):
 
     def __init__(self, *args, **kwargs):
         super(DVForm, self).__init__(*args, **kwargs)
-        self.category_id.choices = [(0, "")] + [
-            (cat.id, cat.name) for cat in Category.query.order_by(Category.name.asc()).all()
-        ]
+        self.category_id.choices = [(cat.id, cat.name) for cat in Category.query.order_by(Category.name.asc()).all()]
         self.resp_center_id.choices = [
-            (rc.id, rc.acronym) for rc in ResponsibilityCenter.query.order_by(ResponsibilityCenter.name.asc()).all()
+            (rc.id, rc.name) for rc in ResponsibilityCenter.query.order_by(ResponsibilityCenter.name.asc()).all()
         ]
+        # Store the full ResponsibilityCenter objects for template access
+        self._resp_centers = {rc.id: rc for rc in ResponsibilityCenter.query.all()}

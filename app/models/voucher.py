@@ -16,18 +16,16 @@ class DisbursementVoucher(db.Model):
 
     obr_number = db.Column(db.String(20), unique=True, nullable=True)
     resp_center_id = db.Column(
-        db.ForeignKey(
-            "responsibility_centers.id",
-            name="fk_vouchers_resp_center_id",
-            ondelete="SET NULL",
-        )
+        db.ForeignKey("responsibility_centers.id", name="fk_vouchers_resp_center_id", ondelete="SET NULL")
     )
     resp_center = db.relationship("ResponsibilityCenter", back_populates="vouchers", lazy="selectin")
 
     particulars = db.Column(db.Text, nullable=False)
     amount = db.Column(db.Numeric(15, 2), nullable=False)
 
-    attachment = db.Column(db.String(120))
+    attachments = db.relationship(
+        "Attachment", back_populates="voucher", lazy="selectin", cascade="all, delete-orphan", passive_deletes=True
+    )
 
     date_received = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
@@ -76,3 +74,20 @@ class ResponsibilityCenter(db.Model):
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self.id} | {self.name}>"
+
+
+class Attachment(db.Model):
+    __tablename__ = "attachments"
+
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(120), nullable=False)
+    filepath = db.Column(db.String(255), nullable=False)
+
+    uploaded_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    voucher_id = db.Column(db.Integer, db.ForeignKey("vouchers.id", ondelete="CASCADE"), nullable=False)
+
+    voucher = db.relationship("DisbursementVoucher", back_populates="attachments", lazy="selectin")
+
+    def __repr__(self):
+        return f"<Attachment: {self.filename} for Voucher ID {self.voucher_id}>"

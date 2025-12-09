@@ -8,7 +8,7 @@ from . import voucher_bp
 from .forms import DVForm
 
 
-@voucher_bp.route("vouchers/")
+@voucher_bp.route("/vouchers")
 @login_required
 def all_vouchers():
     total_vouchers = DisbursementVoucher.query.count()

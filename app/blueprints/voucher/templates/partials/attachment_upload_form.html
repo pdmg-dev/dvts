@@ -1,0 +1,9 @@
+<form
+  hx-post="{{ url_for('voucher.upload_attachment', voucher_id=voucher_id) }}"
+  hx-target="#attachmentList"
+  hx-swap="outerHTML"
+  enctype="multipart/form-data"
+>
+  <input type="file" name="files" multiple class="form-control form-control-sm" accept=".jpg,.jpeg,.png,.pdf" />
+  <button class="btn btn-sm btn-primary mt-2">Upload</button>
+</form>

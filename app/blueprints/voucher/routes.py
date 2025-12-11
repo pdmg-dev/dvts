@@ -1,14 +1,17 @@
+import os
+
 from flask import current_app, render_template, request
 from flask_login import login_required
+from werkzeug.utils import secure_filename
 
 from app.extensions import db
-from app.models.voucher import DisbursementVoucher
+from app.models.voucher import Attachment, DisbursementVoucher
 
 from . import voucher_bp
 from .forms import DVForm
 
 
-@voucher_bp.route("/vouchers")
+@voucher_bp.route("vouchers/")
 @login_required
 def all_vouchers():
     total_vouchers = DisbursementVoucher.query.count()
@@ -87,7 +90,7 @@ def view_voucher(voucher_id):
 def new_voucher():
     form = DVForm()
     if request.headers.get("HX-Request"):
-        return render_template("fragments/form_card.html", form=form)
+        return render_template("fragments/form_card.html", form=form, voucher=None)
 
     page = request.args.get("page", 1, type=int)
     per_page = 25
@@ -140,6 +143,19 @@ def save_voucher():
     )
 
     db.session.add(voucher)
+    db.session.flush()
+
+    files = request.files.getlist("attachments")
+
+    for file in files:
+        if file.filename:
+            filename = secure_filename(file.filename)
+            filepath = os.path.join("uploads", filename)
+            file.save(filepath)
+
+            att = Attachment(filename=filename, filepath=filepath, voucher_id=voucher.id)
+            db.session.add(att)
+
     db.session.commit()
 
     fresh_form = DVForm(formdata=None)
@@ -150,3 +166,33 @@ def save_voucher():
     )
 
     return render_template("partials/form.html", voucher=voucher, form=fresh_form, vouchers=vouchers)
+
+
+@voucher_bp.post("/voucher/<int:voucher_id>/attachments")
+@login_required
+def upload_attachment(voucher_id):
+    current_app.logger.info("UPLOAD ROUTE CALLED")
+
+    file = request.files.get("file")
+    if not file:
+        return "No file", 400
+
+    filename = secure_filename(file.filename)
+    filepath = os.path.join(current_app.config["UPLOAD_FOLDER"], filename)
+    file.save(filepath)
+
+    attach = Attachment(voucher_id=voucher_id, filename=filename)
+    db.session.add(attach)
+    db.session.commit()
+
+    attachments = Attachment.query.filter_by(voucher_id=voucher_id).all()
+    return render_template("partials/attachment_items.html", attachments=attachments)
+
+
+@voucher_bp.delete("/attachment/<int:attachment_id>")
+@login_required
+def delete_attachment(attachment_id):
+    a = Attachment.query.get_or_404(attachment_id)
+    db.session.delete(a)
+    db.session.commit()
+    return ""  # HTMX will remove the list item

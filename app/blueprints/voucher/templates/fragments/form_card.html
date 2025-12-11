@@ -7,6 +7,26 @@
   </div>
   <div class="card-body d-flex" id="voucherFormContainer">{% include 'partials/form.html' %}</div>
   <div class="card-footer">
-    <button type="submit" class="btn btn-primary btn-main" form="newVoucherForm">Save</button>
+    <button
+      type="submit"
+      class="btn btn-primary btn-main"
+      form="newVoucherForm"
+      data-bs-toggle="tooltip"
+      title="Save (Ctrl + Enter)"
+    >
+      Save
+    </button>
+    <button id="attachBtn" class="btn btn-icon" data-bs-toggle="tooltip" title="Add attachments">
+      <i class="bi bi-paperclip"></i>
+    </button>
   </div>
 </div>
+
+<script>
+  document.addEventListener("click", function (e) {
+    if (e.target.closest("#attachBtn")) {
+      const f = document.getElementById("fileInput");
+      if (f) f.click();
+    }
+  });
+</script>

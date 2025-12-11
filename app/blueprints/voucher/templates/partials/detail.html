@@ -2,3 +2,12 @@
 <div>{{ voucher.particulars }}</div>
 <div>{{ voucher.amount }}</div>
 <div>{{ voucher.category.name }}</div>
+<div>{{ voucher.resp_center.name }}</div>
+<div>{{ voucher.date_received }}</div>
+<div>{{ voucher.attachments }}</div>
+  {% for attachment in voucher.attachments %}
+    <div>{{ attachment.filename }}</div>
+  {% endfor %}
+</div>
+<div>{{ voucher.created_at }}</div>
+<div>{{ voucher.updated_at }}</div>

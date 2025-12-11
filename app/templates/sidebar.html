@@ -18,7 +18,7 @@
       <ul class="nav flex-column mt-2">
         <li>
           <a
-            href="#"
+            href="{{ url_for('voucher.all_vouchers') }}"
             hx-get="{{ url_for('voucher.all_vouchers') }}"
             hx-target="#content"
             hx-swap="innerHTML"

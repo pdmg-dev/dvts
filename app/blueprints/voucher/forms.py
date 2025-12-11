@@ -3,7 +3,7 @@ from flask_wtf.file import FileAllowed
 from wtforms import (
     DateTimeLocalField,
     DecimalField,
-    FileField,
+    MultipleFileField,
     SelectField,
     StringField,
     SubmitField,
@@ -33,7 +33,7 @@ class DVForm(FlaskForm):
         validators=[InputRequired(), NumberRange(min=0)],
     )
 
-    attachment = FileField("Attachment", validators=[FileAllowed(["jpg", "jpeg", "png", "pdf"])])
+    attachments = MultipleFileField("Attachments", validators=[FileAllowed(["jpg", "jpeg", "png", "pdf"])])
 
     date_received = DateTimeLocalField("Date Received", format="%Y-%m-%dT%H:%M", validators=[InputRequired()])
     category_id = SelectField("Category", coerce=int, validate_choice=False)

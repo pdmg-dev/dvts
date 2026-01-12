@@ -15,7 +15,7 @@ from .forms import DVForm
 
 @voucher_bp.route("vouchers/")
 @login_required
-def all_vouchers():
+def all_vouchers():  # noqa C901
     from app.models.voucher import Category, ResponsibilityCenter
 
     # Build base query
@@ -24,20 +24,56 @@ def all_vouchers():
     # Apply filters
     category_id = request.args.get("category", type=int)
     resp_center_id = request.args.get("resp_center", type=int)
-    mode_of_payment = request.args.get("mode_of_payment")
     date_from = request.args.get("date_from")
     date_to = request.args.get("date_to")
+    payee = request.args.get("payee")
+    amount_min = request.args.get("amount_min", type=float)
+    amount_max = request.args.get("amount_max", type=float)
+    created_from = request.args.get("created_from")
+    created_to = request.args.get("created_to")
+    modified_from = request.args.get("modified_from")
+    modified_to = request.args.get("modified_to")
 
     if category_id:
         query = query.filter(DisbursementVoucher.category_id == category_id)
     if resp_center_id:
         query = query.filter(DisbursementVoucher.resp_center_id == resp_center_id)
-    if mode_of_payment:
-        query = query.filter(DisbursementVoucher.mode_of_payment == mode_of_payment)
     if date_from:
-        query = query.filter(DisbursementVoucher.date_received >= datetime.fromisoformat(date_from))
+        try:
+            query = query.filter(DisbursementVoucher.date_received >= datetime.fromisoformat(date_from))
+        except ValueError:
+            pass
     if date_to:
-        query = query.filter(DisbursementVoucher.date_received <= datetime.fromisoformat(date_to))
+        try:
+            query = query.filter(DisbursementVoucher.date_received <= datetime.fromisoformat(date_to))
+        except ValueError:
+            pass
+    if payee:
+        query = query.filter(DisbursementVoucher.payee.ilike(f"%{payee}%"))
+    if amount_min is not None:
+        query = query.filter(DisbursementVoucher.amount >= amount_min)
+    if amount_max is not None:
+        query = query.filter(DisbursementVoucher.amount <= amount_max)
+    if created_from:
+        try:
+            query = query.filter(DisbursementVoucher.created_at >= datetime.fromisoformat(created_from))
+        except ValueError:
+            pass
+    if created_to:
+        try:
+            query = query.filter(DisbursementVoucher.created_at <= datetime.fromisoformat(created_to))
+        except ValueError:
+            pass
+    if modified_from:
+        try:
+            query = query.filter(DisbursementVoucher.updated_at >= datetime.fromisoformat(modified_from))
+        except ValueError:
+            pass
+    if modified_to:
+        try:
+            query = query.filter(DisbursementVoucher.updated_at <= datetime.fromisoformat(modified_to))
+        except ValueError:
+            pass
 
     total_vouchers = query.count()
 
@@ -90,9 +126,15 @@ def all_vouchers():
         filters={
             "category": category_id,
             "resp_center": resp_center_id,
-            "mode_of_payment": mode_of_payment,
             "date_from": date_from,
             "date_to": date_to,
+            "payee": payee,
+            "amount_min": amount_min,
+            "amount_max": amount_max,
+            "created_from": created_from,
+            "created_to": created_to,
+            "modified_from": modified_from,
+            "modified_to": modified_to,
         },
     )
 

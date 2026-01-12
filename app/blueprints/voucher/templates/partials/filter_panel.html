@@ -1,6 +1,6 @@
 <div class="filter-panel" id="filterPanel">
   <div class="filter-panel-header">
-    <h5 class="mb-0">Filters</h5>
+    <h5 class="mb-0">Filter</h5>
     <button class="btn btn-icon" id="closeFilterBtn">
       <i class="bi bi-x-lg"></i>
     </button>
@@ -11,10 +11,52 @@
       <!-- Hidden inputs for actual date values -->
       <input type="hidden" name="date_from" id="dateFromValue" value="{{ filters.date_from or '' }}" />
       <input type="hidden" name="date_to" id="dateToValue" value="{{ filters.date_to or '' }}" />
+
+      <!-- Payee -->
+      <div class="mb-3">
+        <label class="form-label form-label-sm fw-semibold">Payee</label>
+        <input
+          type="text"
+          class="form-control form-control-sm"
+          name="payee"
+          id="filterPayee"
+          placeholder="Search payee"
+          value="{{ filters.payee or '' }}"
+        />
+      </div>
+
+      <!-- Amount Range -->
+      <div class="mb-3">
+        <label class="form-label form-label-sm fw-semibold">Amount Range</label>
+        <div class="row g-2">
+          <div class="col-6">
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              name="amount_min"
+              id="filterAmountMin"
+              step="0.01"
+              placeholder="Min"
+              value="{{ filters.amount_min or '' }}"
+            />
+          </div>
+          <div class="col-6">
+            <input
+              type="number"
+              class="form-control form-control-sm"
+              name="amount_max"
+              id="filterAmountMax"
+              step="0.01"
+              placeholder="Max"
+              value="{{ filters.amount_max or '' }}"
+            />
+          </div>
+        </div>
+      </div>
       <!-- Category Filter -->
-      <div class="mb-4">
-        <label class="form-label fw-semibold">Category</label>
-        <select class="form-select" name="category" id="filterCategory">
+      <div class="mb-3">
+        <label class="form-label form-label-sm fw-semibold">Category</label>
+        <select class="form-select form-select-sm" name="category" id="filterCategory">
           <option value="">All Categories</option>
           {% for category in categories %}
             <option value="{{ category.id }}" {% if filters.category == category.id %}selected{% endif %}>
@@ -24,11 +66,11 @@
         </select>
       </div>
 
-      <!-- Responsibility Center Filter -->
-      <div class="mb-4">
-        <label class="form-label fw-semibold">Responsibility Center</label>
-        <select class="form-select" name="resp_center" id="filterRespCenter">
-          <option value="">All Centers</option>
+      <!-- Office Filter -->
+      <div class="mb-3">
+        <label class="form-label form-label-sm fw-semibold">Office</label>
+        <select class="form-select form-select-sm" name="resp_center" id="filterRespCenter">
+          <option value="">All Offices</option>
           {% for center in resp_centers %}
             <option value="{{ center.id }}" {% if filters.resp_center == center.id %}selected{% endif %}>
               {{ center.acronym or center.name }}
@@ -37,26 +79,40 @@
         </select>
       </div>
 
-      <!-- Mode of Payment Filter -->
-      <div class="mb-4">
-        <label class="form-label fw-semibold">Mode of Payment</label>
-        <select class="form-select" name="mode_of_payment" id="filterModeOfPayment">
-          <option value="">All Modes</option>
-          <option value="Cash" {% if filters.mode_of_payment == 'Cash' %}selected{% endif %}>Cash</option>
-          <option value="Check" {% if filters.mode_of_payment == 'Check' %}selected{% endif %}>Check</option>
-          <option value="Others" {% if filters.mode_of_payment == 'Others' %}selected{% endif %}>Others</option>
-        </select>
+      <!-- Created Date Range -->
+      <div class="mb-3">
+        <label class="form-label form-label-sm fw-semibold">Created</label>
+        <div class="row g-2">
+          <div class="col-6">
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              name="created_from"
+              value="{{ filters.created_from or '' }}"
+            />
+            <small class="text-muted">From</small>
+          </div>
+          <div class="col-6">
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              name="created_to"
+              value="{{ filters.created_to or '' }}"
+            />
+            <small class="text-muted">To</small>
+          </div>
+        </div>
       </div>
 
       <!-- Date Range Filter -->
-      <div class="mb-4">
-        <label class="form-label fw-semibold">Date Received</label>
+      <div class="mb-3">
+        <label class="form-label form-label-sm fw-semibold">Date Received</label>
         <div class="row g-2">
           <div class="col-6">
-            <div class="input-group">
+            <div class="input-group input-group-sm">
               <input
                 type="text"
-                class="form-control filter-date-input"
+                class="form-control form-control-sm filter-date-input"
                 id="filterDateFrom"
                 data-td-target-input="nearest"
                 data-td-toggle="datetimepicker"
@@ -69,10 +125,10 @@
             <small class="text-muted">From</small>
           </div>
           <div class="col-6">
-            <div class="input-group">
+            <div class="input-group input-group-sm">
               <input
                 type="text"
-                class="form-control filter-date-input"
+                class="form-control form-control-sm filter-date-input"
                 id="filterDateTo"
                 data-td-target-input="nearest"
                 data-td-toggle="datetimepicker"
@@ -87,11 +143,36 @@
         </div>
       </div>
 
+      <!-- Last Modified Date Range -->
+      <div class="mb-3">
+        <label class="form-label form-label-sm fw-semibold">Last Modified</label>
+        <div class="row g-2">
+          <div class="col-6">
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              name="modified_from"
+              value="{{ filters.modified_from or '' }}"
+            />
+            <small class="text-muted">From</small>
+          </div>
+          <div class="col-6">
+            <input
+              type="date"
+              class="form-control form-control-sm"
+              name="modified_to"
+              value="{{ filters.modified_to or '' }}"
+            />
+            <small class="text-muted">To</small>
+          </div>
+        </div>
+      </div>
+
       <!-- Action Buttons -->
       <div class="d-flex gap-2 mt-4">
         <button
           type="button"
-          class="btn btn-primary flex-fill"
+          class="btn btn-primary flex-fill btn-sm"
           id="applyFiltersBtn"
           hx-get="{{ url_for('voucher.all_vouchers', sort_by=sort_by, sort_dir=sort_dir) }}"
           hx-target="#content"
@@ -101,7 +182,7 @@
         >
           Apply Filters
         </button>
-        <button type="button" class="btn btn-outline-secondary" id="clearFiltersBtn">Clear</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" id="clearFiltersBtn">Clear</button>
       </div>
     </form>
   </div>

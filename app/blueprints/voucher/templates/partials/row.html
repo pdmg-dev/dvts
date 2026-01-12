@@ -18,7 +18,7 @@
     >
   </td>
   <td class="amount-col">
-    <span>₱{{ "%.2f" | format(voucher.amount) }}</span>
+    <span>{{ voucher.amount | currency }}</span>
   </td>
   <td class="date-col">
     <span>{{ voucher.date_received | datetime if voucher.date_received else '-' }}</span>

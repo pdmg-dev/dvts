@@ -17,13 +17,63 @@
 
   <button
     class="btn btn-icon"
-    hx-get="{{ url_for('voucher.all_vouchers', page=vouchers.page) }}"
+    hx-get="{{ url_for('voucher.all_vouchers', page=vouchers.page, category=filters.category, resp_center=filters.resp_center, mode_of_payment=filters.mode_of_payment, date_from=filters.date_from, date_to=filters.date_to, sort_by=sort_by, sort_dir=sort_dir) }}"
     hx-target="#content"
     hx-swap="innerHTML"
     hx-push-url="true"
   >
     <i class="bi bi-arrow-clockwise"></i>
   </button>
+
+  <div class="dropdown">
+    <button
+      class="btn btn-icon"
+      type="button"
+      id="exportDropdown"
+      data-bs-toggle="dropdown"
+      data-export-url="{{ url_for('voucher.export_vouchers') }}"
+      aria-expanded="false"
+    >
+      <i class="bi bi-file-earmark-spreadsheet"></i>
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="exportDropdown">
+      <li>
+        <h6 class="dropdown-header"><i class="bi bi-download me-1"></i>Export Options</h6>
+      </li>
+      <li><hr class="dropdown-divider" /></li>
+      <li>
+        <button class="dropdown-item" id="exportFiltered">
+          <i class="bi bi-funnel-fill me-2 text-primary"></i>
+          <div class="d-inline-block">
+            <div class="fw-semibold">Export Filtered Results</div>
+            <small class="text-muted">Export {{ total_vouchers }} record{{ 's' if total_vouchers != 1 else '' }}</small>
+          </div>
+        </button>
+      </li>
+      <li>
+        <button class="dropdown-item" id="exportAll">
+          <i class="bi bi-database-fill me-2 text-success"></i>
+          <div class="d-inline-block">
+            <div class="fw-semibold">Export All Records</div>
+            <small class="text-muted">Export entire database</small>
+          </div>
+        </button>
+      </li>
+      <li>
+        <button class="dropdown-item" id="exportCurrentPage">
+          <i class="bi bi-file-earmark-text me-2 text-info"></i>
+          <div class="d-inline-block">
+            <div class="fw-semibold">Export Current Page</div>
+            <small class="text-muted"
+              >Export {{ last_item - first_item + 1 }} record{{ 's' if (last_item - first_item + 1) != 1 else '' }} on
+              this page</small
+            >
+          </div>
+        </button>
+      </li>
+    </ul>
+  </div>
 
   <div class="d-none d-sm-flex ms-auto">
     <div class="dropdown">
@@ -39,7 +89,7 @@
         <li>
           <button
             class="dropdown-item"
-            hx-get="{{ url_for('voucher.all_vouchers', page=1) }}"
+            hx-get="{{ url_for('voucher.all_vouchers', page=1, category=filters.category, resp_center=filters.resp_center, mode_of_payment=filters.mode_of_payment, date_from=filters.date_from, date_to=filters.date_to, sort_by=sort_by, sort_dir=sort_dir) }}"
             hx-target="#content"
             hx-swap="innerHTML"
             hx-push-url="true"
@@ -50,7 +100,7 @@
         <li>
           <button
             class="dropdown-item"
-            hx-get="{{ url_for('voucher.all_vouchers', page=vouchers.pages) }}"
+            hx-get="{{ url_for('voucher.all_vouchers', page=vouchers.pages, category=filters.category, resp_center=filters.resp_center, mode_of_payment=filters.mode_of_payment, date_from=filters.date_from, date_to=filters.date_to, sort_by=sort_by, sort_dir=sort_dir) }}"
             hx-target="#content"
             hx-swap="innerHTML"
             hx-push-url="true"
@@ -64,7 +114,7 @@
     {% if vouchers.has_prev %}
       <button
         class="btn btn-icon"
-        hx-get="{{ url_for('voucher.all_vouchers', page=vouchers.prev_num) }}"
+        hx-get="{{ url_for('voucher.all_vouchers', page=vouchers.prev_num, category=filters.category, resp_center=filters.resp_center, mode_of_payment=filters.mode_of_payment, date_from=filters.date_from, date_to=filters.date_to, sort_by=sort_by, sort_dir=sort_dir) }}"
         hx-target="#content"
         hx-swap="innerHTML"
         hx-push-url="true"
@@ -80,7 +130,7 @@
     {% if vouchers.has_next %}
       <button
         class="btn btn-icon"
-        hx-get="{{ url_for('voucher.all_vouchers', page=vouchers.next_num) }}"
+        hx-get="{{ url_for('voucher.all_vouchers', page=vouchers.next_num, category=filters.category, resp_center=filters.resp_center, mode_of_payment=filters.mode_of_payment, date_from=filters.date_from, date_to=filters.date_to, sort_by=sort_by, sort_dir=sort_dir) }}"
         hx-target="#content"
         hx-swap="innerHTML"
         hx-push-url="true"
@@ -93,6 +143,14 @@
       </button>
     {% endif %}
 
+    <button class="btn btn-icon" id="filterBtn">
+      <i class="bi bi-funnel"></i>
+      {% if filters.category or filters.resp_center or filters.mode_of_payment or filters.date_from or filters.date_to %}
+        <span class="filter-badge"></span>
+      {% endif %}
+    </button>
+
+    
     <button class="btn btn-icon split" id="splitBtn">
       <i class="bi bi-layout-split"></i>
     </button>

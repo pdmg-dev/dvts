@@ -185,3 +185,122 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   opacity: 0;
   display: none;
 }
+
+/* Filter Panel Styles - Sidebar */
+.filter-panel {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  width: 256px;
+  height: calc(100vh - 64px);
+  background: var(--bs-light);
+  box-shadow: none;
+  border-left: 1px solid var(--bs-light-border-subtle);
+  z-index: 1050;
+  transform: translateX(256px);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  will-change: transform;
+  font-size: 13px;
+}
+
+.filter-panel.active {
+  transform: translateX(0);
+}
+
+/* Push main content when filter panel is open */
+main.filter-open {
+  right: 256px !important;
+  transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+main {
+  transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-panel.no-transition {
+  transition: none;
+}
+
+.filter-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--bs-light-border-subtle);
+  flex-shrink: 0;
+}
+
+.filter-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.filter-panel h5 {
+  font-size: 1rem;
+}
+
+.filter-panel .form-label,
+.filter-panel .form-select,
+.filter-panel .form-control,
+.filter-panel .input-group-text,
+.filter-panel small {
+  font-size: 13px;
+}
+
+.filter-panel .btn,
+.filter-panel .btn .bi {
+  font-size: 13px;
+}
+
+.toolbar #filterBtn {
+  position: relative;
+}
+
+.toolbar #filterBtn.active {
+  background-color: var(--bs-light-border-subtle) !important;
+  border-color: var(--bs-light-border-subtle) !important;
+}
+
+.filter-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--bs-primary);
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+/* Filter Panel Date Picker Styles */
+.filter-date-input {
+  cursor: pointer;
+}
+
+.filter-panel .input-group .form-control {
+  cursor: pointer;
+}
+
+.filter-panel .input-group-text {
+  cursor: pointer;
+  background-color: var(--bs-light);
+  border-color: var(--bs-light-border-subtle);
+  transition: all 0.15s ease;
+}
+
+.filter-panel .input-group-text:hover {
+  background-color: var(--bs-light-border-subtle);
+}
+
+.filter-panel .input-group:focus-within .input-group-text {
+  background-color: var(--bs-light-border-subtle);
+  border-color: var(--bs-primary);
+}
+
+/* Tempus Dominus calendar styling for filter panel */
+.tempusdominus-bootstrap-4.show {
+  z-index: 1100;
+}

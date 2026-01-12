@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
     initTableScroll();
     initSplitLayout();
     initTableArrowNavigation();
+    initFilterPanel();
+    initExportButton();
 });
 
 // Re-initialize functionalities after HTMX content swap
@@ -17,6 +19,13 @@ document.addEventListener("htmx:afterSwap", (evt) => {
     // Only rebind if the swapped content contains your split button
     if (evt.target.querySelector("#splitBtn")) {
         initSplitLayout();
+    }
+    // Rebind filter panel after HTMX swaps
+    if (evt.target.querySelector("#filterBtn")) {
+        initFilterPanel();
+    }
+    if (evt.target.querySelector("#exportDropdown")) {
+        initExportButton();
     }
 });
 
@@ -216,4 +225,273 @@ function initTableArrowNavigation() {
             event.preventDefault();
         }
     });
+}
+
+// Filter Panel
+function initFilterPanel() {
+    const filterBtn = document.getElementById("filterBtn");
+    const filterPanel = document.getElementById("filterPanel");
+
+    if (!filterBtn || !filterPanel) return;
+
+    // Always reinitialize - clear old bound state
+    filterPanel.dataset.bound = "false";
+
+    const closeFilterBtn = document.getElementById("closeFilterBtn");
+    const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+    const mainContent = document.querySelector("main");
+
+    // Initialize date pickers if Tempus Dominus is available
+    initFilterDatePickers();
+
+    let isAnimating = false;
+
+    function setPanelState(active, animate = true) {
+        if (isAnimating) return;
+        if (!animate) {
+            filterPanel.classList.add("no-transition");
+            if (mainContent) mainContent.classList.add("no-transition");
+        }
+
+        isAnimating = true;
+        filterPanel.classList.toggle("active", active);
+        filterBtn.classList.toggle("active", active);
+        if (mainContent) {
+            mainContent.classList.toggle("filter-open", active);
+        }
+
+        localStorage.setItem("filterPanelOpen", active ? "true" : "false");
+
+        setTimeout(
+            () => {
+                if (!animate) {
+                    filterPanel.classList.remove("no-transition");
+                    if (mainContent)
+                        mainContent.classList.remove("no-transition");
+                }
+                isAnimating = false;
+            },
+            animate ? 350 : 0,
+        );
+    }
+
+    // Toggle filter panel - prevent duplicate listeners by removing old ones first
+    filterBtn.replaceWith(filterBtn.cloneNode(true));
+    const newFilterBtn = document.getElementById("filterBtn");
+
+    newFilterBtn.addEventListener("click", (evt) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        if (isAnimating) return;
+
+        const isOpen = filterPanel.classList.contains("active");
+        setPanelState(!isOpen, true);
+    });
+
+    const closePanel = () => setPanelState(false, true);
+
+    // Close on X button click
+    if (closeFilterBtn) {
+        closeFilterBtn.addEventListener("click", (evt) => {
+            evt.preventDefault();
+            evt.stopPropagation();
+            closePanel();
+        });
+    }
+
+    // Clear filters
+    if (clearFiltersBtn) {
+        clearFiltersBtn.addEventListener("click", (evt) => {
+            evt.preventDefault();
+            const filterForm = document.getElementById("filterForm");
+            if (filterForm) {
+                filterForm.reset();
+                // Trigger apply with cleared filters
+                const applyBtn = document.getElementById("applyFiltersBtn");
+                if (applyBtn) {
+                    htmx.trigger(applyBtn, "click");
+                }
+            }
+        });
+    }
+
+    // Restore persisted state (default closed)
+    const savedOpen = localStorage.getItem("filterPanelOpen") === "true";
+    if (savedOpen) {
+        setPanelState(true, false);
+    }
+
+    filterPanel.dataset.bound = "true";
+}
+
+// Export button
+function initExportButton() {
+    const exportDropdown = document.getElementById("exportDropdown");
+    const exportFiltered = document.getElementById("exportFiltered");
+    const exportAll = document.getElementById("exportAll");
+    const exportCurrentPage = document.getElementById("exportCurrentPage");
+
+    if (!exportDropdown || exportDropdown.dataset.bound === "true") return;
+
+    const exportUrl = exportDropdown.dataset.exportUrl;
+
+    function collectFilters() {
+        const form = document.getElementById("filterForm");
+        const params = new URLSearchParams();
+
+        if (form) {
+            const fields = [
+                "category",
+                "resp_center",
+                "mode_of_payment",
+                "date_from",
+                "date_to",
+            ];
+            fields.forEach((name) => {
+                const el = form.elements[name];
+                if (el && el.value) {
+                    params.append(name, el.value);
+                }
+            });
+        }
+        return params;
+    }
+
+    function doExport(includeFilters, currentPageOnly) {
+        const params = includeFilters
+            ? collectFilters()
+            : new URLSearchParams();
+        if (currentPageOnly) {
+            params.append("page_only", "true");
+        }
+        const url = params.toString()
+            ? `${exportUrl}?${params.toString()}`
+            : exportUrl;
+        window.location.href = url;
+    }
+
+    if (exportFiltered) {
+        exportFiltered.addEventListener("click", (evt) => {
+            evt.preventDefault();
+            doExport(true, false);
+        });
+    }
+
+    if (exportAll) {
+        exportAll.addEventListener("click", (evt) => {
+            evt.preventDefault();
+            doExport(false, false);
+        });
+    }
+
+    if (exportCurrentPage) {
+        exportCurrentPage.addEventListener("click", (evt) => {
+            evt.preventDefault();
+            doExport(true, true);
+        });
+    }
+
+    exportDropdown.dataset.bound = "true";
+}
+
+// Initialize Tempus Dominus date pickers for filter panel
+function initFilterDatePickers() {
+    if (typeof tempusDominus === "undefined") {
+        console.warn("Tempus Dominus not loaded");
+        return;
+    }
+
+    const dateFromInput = document.getElementById("filterDateFrom");
+    const dateToInput = document.getElementById("filterDateTo");
+    const dateFromValue = document.getElementById("dateFromValue");
+    const dateToValue = document.getElementById("dateToValue");
+
+    if (!dateFromInput || !dateToInput) return;
+
+    const pickerConfig = {
+        localization: {
+            locale: "en",
+            format: "yyyy-MM-dd",
+        },
+        display: {
+            viewMode: "calendar",
+            theme: "light",
+            keyboardNavigation: true,
+            icons: {
+                type: "icons",
+                time: "bi bi-clock",
+                date: "bi bi-calendar-event",
+                up: "bi bi-arrow-up",
+                down: "bi bi-arrow-down",
+                previous: "bi bi-chevron-left",
+                next: "bi bi-chevron-right",
+                today: "bi bi-calendar-check",
+                clear: "bi bi-trash",
+                close: "bi bi-x-lg",
+            },
+            buttons: {
+                today: true,
+                clear: true,
+                close: true,
+            },
+            components: {
+                calendar: true,
+                date: true,
+                month: true,
+                year: true,
+                decades: false,
+                clock: false,
+                hours: false,
+                minutes: false,
+                seconds: false,
+            },
+        },
+    };
+
+    // Initialize "From" date picker
+    const pickerFrom = new tempusDominus.TempusDominus(
+        dateFromInput,
+        pickerConfig,
+    );
+    dateFromInput.addEventListener("change.datetimepicker", (e) => {
+        if (e.detail.date) {
+            const date = e.detail.date;
+            const formattedDate = date.toFormat("yyyy-MM-dd");
+            if (dateFromValue) {
+                dateFromValue.value = formattedDate;
+            }
+        } else {
+            if (dateFromValue) {
+                dateFromValue.value = "";
+            }
+        }
+    });
+
+    // Initialize "To" date picker
+    const pickerTo = new tempusDominus.TempusDominus(dateToInput, pickerConfig);
+    dateToInput.addEventListener("change.datetimepicker", (e) => {
+        if (e.detail.date) {
+            const date = e.detail.date;
+            const formattedDate = date.toFormat("yyyy-MM-dd");
+            if (dateToValue) {
+                dateToValue.value = formattedDate;
+            }
+        } else {
+            if (dateToValue) {
+                dateToValue.value = "";
+            }
+        }
+    });
+
+    // Set initial values if filters exist
+    if (dateFromValue && dateFromValue.value) {
+        pickerFrom.viewDate(new tempusDominus.DateTime(dateFromValue.value));
+        dateFromInput.value = dateFromValue.value;
+    }
+
+    if (dateToValue && dateToValue.value) {
+        pickerTo.viewDate(new tempusDominus.DateTime(dateToValue.value));
+        dateToInput.value = dateToValue.value;
+    }
 }

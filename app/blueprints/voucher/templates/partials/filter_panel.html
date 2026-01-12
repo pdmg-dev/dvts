@@ -1,0 +1,108 @@
+<div class="filter-panel" id="filterPanel">
+  <div class="filter-panel-header">
+    <h5 class="mb-0">Filters</h5>
+    <button class="btn btn-icon" id="closeFilterBtn">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="filter-panel-body">
+    <form id="filterForm">
+      <!-- Hidden inputs for actual date values -->
+      <input type="hidden" name="date_from" id="dateFromValue" value="{{ filters.date_from or '' }}" />
+      <input type="hidden" name="date_to" id="dateToValue" value="{{ filters.date_to or '' }}" />
+      <!-- Category Filter -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Category</label>
+        <select class="form-select" name="category" id="filterCategory">
+          <option value="">All Categories</option>
+          {% for category in categories %}
+            <option value="{{ category.id }}" {% if filters.category == category.id %}selected{% endif %}>
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Responsibility Center Filter -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Responsibility Center</label>
+        <select class="form-select" name="resp_center" id="filterRespCenter">
+          <option value="">All Centers</option>
+          {% for center in resp_centers %}
+            <option value="{{ center.id }}" {% if filters.resp_center == center.id %}selected{% endif %}>
+              {{ center.acronym or center.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Mode of Payment Filter -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Mode of Payment</label>
+        <select class="form-select" name="mode_of_payment" id="filterModeOfPayment">
+          <option value="">All Modes</option>
+          <option value="Cash" {% if filters.mode_of_payment == 'Cash' %}selected{% endif %}>Cash</option>
+          <option value="Check" {% if filters.mode_of_payment == 'Check' %}selected{% endif %}>Check</option>
+          <option value="Others" {% if filters.mode_of_payment == 'Others' %}selected{% endif %}>Others</option>
+        </select>
+      </div>
+
+      <!-- Date Range Filter -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Date Received</label>
+        <div class="row g-2">
+          <div class="col-6">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control filter-date-input"
+                id="filterDateFrom"
+                data-td-target-input="nearest"
+                data-td-toggle="datetimepicker"
+                placeholder="From"
+              />
+              <span class="input-group-text" data-td-target="#filterDateFrom" data-td-toggle="datetimepicker">
+                <i class="bi bi-calendar-event"></i>
+              </span>
+            </div>
+            <small class="text-muted">From</small>
+          </div>
+          <div class="col-6">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control filter-date-input"
+                id="filterDateTo"
+                data-td-target-input="nearest"
+                data-td-toggle="datetimepicker"
+                placeholder="To"
+              />
+              <span class="input-group-text" data-td-target="#filterDateTo" data-td-toggle="datetimepicker">
+                <i class="bi bi-calendar-event"></i>
+              </span>
+            </div>
+            <small class="text-muted">To</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex gap-2 mt-4">
+        <button
+          type="button"
+          class="btn btn-primary flex-fill"
+          id="applyFiltersBtn"
+          hx-get="{{ url_for('voucher.all_vouchers') }}"
+          hx-target="#content"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          hx-include="#filterForm"
+        >
+          Apply Filters
+        </button>
+        <button type="button" class="btn btn-outline-secondary" id="clearFiltersBtn">Clear</button>
+      </div>
+    </form>
+  </div>
+</div>

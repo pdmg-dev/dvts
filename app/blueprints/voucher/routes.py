@@ -1,6 +1,8 @@
 import os
+from datetime import datetime
+from io import BytesIO
 
-from flask import current_app, render_template, request
+from flask import current_app, render_template, request, send_file
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 
@@ -14,11 +16,35 @@ from .forms import DVForm
 @voucher_bp.route("vouchers/")
 @login_required
 def all_vouchers():
-    total_vouchers = DisbursementVoucher.query.count()
+    from app.models.voucher import Category, ResponsibilityCenter
+
+    # Build base query
+    query = DisbursementVoucher.query
+
+    # Apply filters
+    category_id = request.args.get("category", type=int)
+    resp_center_id = request.args.get("resp_center", type=int)
+    mode_of_payment = request.args.get("mode_of_payment")
+    date_from = request.args.get("date_from")
+    date_to = request.args.get("date_to")
+
+    if category_id:
+        query = query.filter(DisbursementVoucher.category_id == category_id)
+    if resp_center_id:
+        query = query.filter(DisbursementVoucher.resp_center_id == resp_center_id)
+    if mode_of_payment:
+        query = query.filter(DisbursementVoucher.mode_of_payment == mode_of_payment)
+    if date_from:
+        query = query.filter(DisbursementVoucher.date_received >= datetime.fromisoformat(date_from))
+    if date_to:
+        query = query.filter(DisbursementVoucher.date_received <= datetime.fromisoformat(date_to))
+
+    total_vouchers = query.count()
+
     # Pagination setup
     page = request.args.get("page", 1, type=int)
     per_page = 25
-    vouchers = DisbursementVoucher.query.order_by(DisbursementVoucher.date_received.desc()).paginate(
+    vouchers = query.order_by(DisbursementVoucher.date_received.desc()).paginate(
         page=page, per_page=per_page, error_out=False
     )
 
@@ -28,12 +54,110 @@ def all_vouchers():
 
     template = "fragments/list_content.html" if request.headers.get("HX-Request") else "pages/list.html"
 
+    # Get filter options for the panel
+    categories = Category.query.order_by(Category.name).all()
+    resp_centers = ResponsibilityCenter.query.order_by(ResponsibilityCenter.name).all()
+
     return render_template(
         template,
         vouchers=vouchers,
         total_vouchers=total_vouchers,
         first_item=first_item,
         last_item=last_item,
+        categories=categories,
+        resp_centers=resp_centers,
+        filters={
+            "category": category_id,
+            "resp_center": resp_center_id,
+            "mode_of_payment": mode_of_payment,
+            "date_from": date_from,
+            "date_to": date_to,
+        },
+    )
+
+
+@voucher_bp.route("vouchers/export")
+@login_required
+def export_vouchers():
+    import openpyxl
+
+    # Build base query with same filters as list view
+    query = DisbursementVoucher.query
+
+    category_id = request.args.get("category", type=int)
+    resp_center_id = request.args.get("resp_center", type=int)
+    mode_of_payment = request.args.get("mode_of_payment")
+    date_from = request.args.get("date_from")
+    date_to = request.args.get("date_to")
+
+    if category_id:
+        query = query.filter(DisbursementVoucher.category_id == category_id)
+    if resp_center_id:
+        query = query.filter(DisbursementVoucher.resp_center_id == resp_center_id)
+    if mode_of_payment:
+        query = query.filter(DisbursementVoucher.mode_of_payment == mode_of_payment)
+    if date_from:
+        query = query.filter(DisbursementVoucher.date_received >= datetime.fromisoformat(date_from))
+    if date_to:
+        query = query.filter(DisbursementVoucher.date_received <= datetime.fromisoformat(date_to))
+
+    # Check if export is for current page only
+    page_only = request.args.get("page_only") == "true"
+    if page_only:
+        page = request.args.get("page", 1, type=int)
+        per_page = 25
+        paginated = query.order_by(DisbursementVoucher.date_received.desc()).paginate(
+            page=page, per_page=per_page, error_out=False
+        )
+        vouchers = paginated.items
+    else:
+        vouchers = query.order_by(DisbursementVoucher.date_received.desc()).all()
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Vouchers"
+
+    headers = [
+        "DV Number",
+        "Payee",
+        "Particulars",
+        "Amount",
+        "Mode of Payment",
+        "Category",
+        "Responsibility Center",
+        "Date Received",
+    ]
+    ws.append(headers)
+
+    for voucher in vouchers:
+        ws.append(
+            [
+                voucher.dv_number or "",
+                voucher.payee or "",
+                voucher.particulars or "",
+                float(voucher.amount) if voucher.amount is not None else None,
+                voucher.mode_of_payment or "",
+                voucher.category.name if voucher.category else "",
+                voucher.resp_center.name if voucher.resp_center else "",
+                voucher.date_received.strftime("%Y-%m-%d %H:%M") if voucher.date_received else "",
+            ]
+        )
+
+    # Auto width (simple heuristic)
+    for column_cells in ws.columns:
+        length = max(len(str(cell.value)) if cell.value is not None else 0 for cell in column_cells)
+        ws.column_dimensions[column_cells[0].column_letter].width = min(max(length + 2, 12), 40)
+
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    filename = f"vouchers_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    return send_file(
+        output,
+        as_attachment=True,
+        download_name=filename,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
 
 
@@ -88,6 +212,8 @@ def view_voucher(voucher_id):
 @voucher_bp.route("/voucher/new")
 @login_required
 def new_voucher():
+    from app.models.voucher import Category, ResponsibilityCenter
+
     form = DVForm()
     if request.headers.get("HX-Request"):
         return render_template("fragments/form_card.html", form=form, voucher=None)
@@ -101,6 +227,30 @@ def new_voucher():
     total_vouchers = vouchers.total
     first_item = (vouchers.page - 1) * vouchers.per_page + 1
     last_item = min(vouchers.page * vouchers.per_page, vouchers.total)
+
+    # Get filter options for the panel
+    categories = Category.query.order_by(Category.name).all()
+    resp_centers = ResponsibilityCenter.query.order_by(ResponsibilityCenter.name).all()
+
+    template = "pages/list.html"
+    return render_template(
+        template,
+        vouchers=vouchers,
+        total_vouchers=total_vouchers,
+        first_item=first_item,
+        last_item=last_item,
+        form=form,
+        show_card=True,
+        categories=categories,
+        resp_centers=resp_centers,
+        filters={
+            "category": None,
+            "resp_center": None,
+            "mode_of_payment": None,
+            "date_from": None,
+            "date_to": None,
+        },
+    )
 
     template = "pages/list.html"
     return render_template(

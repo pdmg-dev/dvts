@@ -274,7 +274,6 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   height: calc(100vh - 64px);
   background: var(--bs-light);
   box-shadow: none;
-  z-index: 1050;
   transform: translateX(256px);
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;

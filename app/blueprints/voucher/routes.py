@@ -141,7 +141,7 @@ def all_vouchers():  # noqa C901
 
 @voucher_bp.route("vouchers/export")
 @login_required
-def export_vouchers():
+def export_vouchers():  # noqa C901
     import openpyxl
 
     # Build base query with same filters as list view
@@ -164,47 +164,89 @@ def export_vouchers():
     if date_to:
         query = query.filter(DisbursementVoucher.date_received <= datetime.fromisoformat(date_to))
 
+    # Sorting setup
+    sort_by = request.args.get("sort_by", "date_received")
+    sort_dir = request.args.get("sort_dir", "desc")
+
+    sort_mapping = {
+        "payee": DisbursementVoucher.payee,
+        "particulars": DisbursementVoucher.particulars,
+        "amount": DisbursementVoucher.amount,
+        "date_received": DisbursementVoucher.date_received,
+        "created_at": DisbursementVoucher.created_at,
+        "updated_at": DisbursementVoucher.updated_at,
+        "category": DisbursementVoucher.category_id,
+        "resp_center": DisbursementVoucher.resp_center_id,
+    }
+
+    sort_column = sort_mapping.get(sort_by, DisbursementVoucher.date_received)
+    if sort_dir == "asc":
+        query = query.order_by(sort_column.asc())
+    else:
+        query = query.order_by(sort_column.desc())
+
     # Check if export is for current page only
     page_only = request.args.get("page_only") == "true"
     if page_only:
         page = request.args.get("page", 1, type=int)
         per_page = 25
-        paginated = query.order_by(DisbursementVoucher.date_received.desc()).paginate(
-            page=page, per_page=per_page, error_out=False
-        )
+        paginated = query.paginate(page=page, per_page=per_page, error_out=False)
         vouchers = paginated.items
     else:
-        vouchers = query.order_by(DisbursementVoucher.date_received.desc()).all()
+        vouchers = query.all()
+
+    # Get custom fields if provided
+    custom_fields = request.args.get("fields")
+    if custom_fields:
+        selected_fields = custom_fields.split(",")
+    else:
+        # Default fields
+        selected_fields = [
+            "dv_number",
+            "payee",
+            "particulars",
+            "amount",
+            "mode_of_payment",
+            "category",
+            "resp_center",
+            "date_received",
+        ]
+
+    # Field mapping: internal name -> (header label, value getter function)
+    field_config = {
+        "dv_number": ("DV Number", lambda v: v.dv_number or ""),
+        "category": ("Category", lambda v: v.category.name if v.category else ""),
+        "resp_center": ("Responsibility Center", lambda v: v.resp_center.name if v.resp_center else ""),
+        "payee": ("Payee", lambda v: v.payee or ""),
+        "particulars": ("Particulars", lambda v: v.particulars or ""),
+        "amount": ("Amount", lambda v: float(v.amount) if v.amount is not None else None),
+        "mode_of_payment": ("Mode of Payment", lambda v: v.mode_of_payment or ""),
+        "date_received": (
+            "Date Received",
+            lambda v: v.date_received.strftime("%Y-%m-%d %H:%M") if v.date_received else "",
+        ),
+        "created_at": (
+            "Created At",
+            lambda v: v.created_at.strftime("%Y-%m-%d %H:%M") if v.created_at else "",
+        ),
+        "updated_at": (
+            "Updated At",
+            lambda v: v.updated_at.strftime("%Y-%m-%d %H:%M") if v.updated_at else "",
+        ),
+    }
 
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Vouchers"
 
-    headers = [
-        "DV Number",
-        "Payee",
-        "Particulars",
-        "Amount",
-        "Mode of Payment",
-        "Category",
-        "Responsibility Center",
-        "Date Received",
-    ]
+    # Build headers based on selected fields
+    headers = [field_config[field][0] for field in selected_fields if field in field_config]
     ws.append(headers)
 
+    # Build rows based on selected fields
     for voucher in vouchers:
-        ws.append(
-            [
-                voucher.dv_number or "",
-                voucher.payee or "",
-                voucher.particulars or "",
-                float(voucher.amount) if voucher.amount is not None else None,
-                voucher.mode_of_payment or "",
-                voucher.category.name if voucher.category else "",
-                voucher.resp_center.name if voucher.resp_center else "",
-                voucher.date_received.strftime("%Y-%m-%d %H:%M") if voucher.date_received else "",
-            ]
-        )
+        row = [field_config[field][1](voucher) for field in selected_fields if field in field_config]
+        ws.append(row)
 
     # Auto width (simple heuristic)
     for column_cells in ws.columns:

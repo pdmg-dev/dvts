@@ -9,12 +9,19 @@ document.addEventListener("htmx:afterSwap", function () {
 
 // For closing the new voucher card
 function closeVoucherCard() {
-    document
-        .getElementById("closeVoucherCard")
-        .addEventListener("click", function () {
-            document.getElementById("newVoucherCard").remove();
+    const closeBtn = document.getElementById("closeVoucherCard");
+    if (closeBtn) {
+        // Remove existing listeners by cloning and replacing
+        const newCloseBtn = closeBtn.cloneNode(true);
+        closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+
+        newCloseBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            const container = document.getElementById("floatingCardContainer");
+            container.innerHTML = "";
             history.pushState({}, "", "/vouchers");
         });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function () {

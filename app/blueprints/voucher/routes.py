@@ -166,6 +166,7 @@ def save_voucher():
     )
 
     return render_template("partials/form.html", voucher=voucher, form=fresh_form, vouchers=vouchers)
+    # return "", 200, {"HX-Retarget": "#floatingCardContainer", "HX-Reswap": "innerHTML"}
 
 
 @voucher_bp.post("/voucher/<int:voucher_id>/attachments")

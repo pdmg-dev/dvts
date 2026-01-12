@@ -1,6 +1,20 @@
 <div class="table-split-wrapper">
   <div class="table-container" id="tableContainer">
     <table class="vouchers-table" id="vouchersTable">
+      <thead>
+        <tr class="table-header sticky-top">
+          <th class="select-col">&nbsp;</th>
+          <th class="payee-col">Payee</th>
+          <th class="particulars-col">Particulars</th>
+          <th class="amount-col">Amount</th>
+          <th class="date-col">Date Received</th>
+          <th class="created-col">Created</th>
+          <th class="modified-col">Last Modified</th>
+          <th class="status-col">Status</th>
+          <th class="category-col">Category</th>
+          <th class="office-col">Office</th>
+        </tr>
+      </thead>
       <tbody id="vouchersTableBody">
         {% for voucher in vouchers.items %}
           {% include 'partials/row.html' %}

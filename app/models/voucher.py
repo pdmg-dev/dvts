@@ -29,6 +29,13 @@ class DisbursementVoucher(db.Model):
 
     date_received = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
+    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(
+        db.DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
     category_id = db.Column(db.ForeignKey("categories.id", name="fk_vouchers_category_id", ondelete="SET NULL"))
     category = db.relationship("Category", back_populates="vouchers", lazy="selectin")
 

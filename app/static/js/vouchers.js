@@ -109,10 +109,16 @@ function initTableScroll() {
 
     tableContainer.addEventListener("scroll", () => {
         // Add or remove class based on scroll position
-        if (tableContainer.scrollTop > 0) {
-            toolbar.classList.add("table-scrolled");
+        const isScrolled = tableContainer.scrollTop > 0;
+        const toolbar = document.querySelector(".toolbar");
+        const thead = document.querySelector(".vouchers-table thead");
+
+        if (isScrolled) {
+            toolbar?.classList.add("table-scrolled");
+            thead?.classList.add("table-scrolled");
         } else {
-            toolbar.classList.remove("table-scrolled");
+            toolbar?.classList.remove("table-scrolled");
+            thead?.classList.remove("table-scrolled");
         }
     });
 }

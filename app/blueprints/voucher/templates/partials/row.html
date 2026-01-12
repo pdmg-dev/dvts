@@ -13,12 +13,29 @@
     <span>{{ voucher.payee }}</span>
   </td>
   <td class="particulars-col">
-    <span> {{ voucher.particulars }} </span>
+    <span title="{{ voucher.particulars }}"
+      >{{ voucher.particulars[:50] }}{% if voucher.particulars|length > 50 %}...{% endif %}</span
+    >
   </td>
-  <td class="status-col text-center">
-    <span class="badge rounded-pill text-bg-primary">Primary</span>
+  <td class="amount-col">
+    <span>₱{{ "%.2f" | format(voucher.amount) }}</span>
   </td>
-  <td class="date-col text-end pe-3 small">
-    <span>{{ voucher.date_received | datetime }}</span>
+  <td class="date-col">
+    <span>{{ voucher.date_received | datetime if voucher.date_received else '-' }}</span>
+  </td>
+  <td class="created-col">
+    <span>{{ voucher.created_at | datetime if voucher.created_at else '-' }}</span>
+  </td>
+  <td class="modified-col">
+    <span>{{ voucher.updated_at | datetime if voucher.updated_at else '-' }}</span>
+  </td>
+  <td class="status-col">
+    <span class="badge rounded-pill text-bg-primary">Active</span>
+  </td>
+  <td class="category-col">
+    <span class="badge bg-light text-dark">{{ voucher.category.name }}</span>
+  </td>
+  <td class="office-col">
+    <span>{{ voucher.resp_center.acronym or voucher.resp_center.name if voucher.resp_center else '-' }}</span>
   </td>
 </tr>

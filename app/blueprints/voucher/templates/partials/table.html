@@ -4,15 +4,33 @@
       <thead>
         <tr class="table-header sticky-top">
           <th class="select-col">&nbsp;</th>
-          <th class="payee-col">Payee</th>
-          <th class="particulars-col">Particulars</th>
-          <th class="amount-col">Amount</th>
-          <th class="date-col">Date Received</th>
-          <th class="created-col">Created</th>
-          <th class="modified-col">Last Modified</th>
-          <th class="status-col">Status</th>
-          <th class="category-col">Category</th>
-          <th class="office-col">Office</th>
+          <th class="payee-col sortable" data-sort-column="payee">
+            Payee <i class="bi bi-caret-down-fill sort-icon"></i>
+          </th>
+          <th class="particulars-col sortable" data-sort-column="particulars">
+            Particulars <i class="bi bi-caret-down-fill sort-icon"></i>
+          </th>
+          <th class="amount-col sortable" data-sort-column="amount">
+            Amount <i class="bi bi-caret-down-fill sort-icon"></i>
+          </th>
+          <th class="date-col sortable" data-sort-column="date_received">
+            Date Received <i class="bi bi-caret-down-fill sort-icon"></i>
+          </th>
+          <th class="created-col sortable" data-sort-column="created_at">
+            Created <i class="bi bi-caret-down-fill sort-icon"></i>
+          </th>
+          <th class="modified-col sortable" data-sort-column="updated_at">
+            Last Modified <i class="bi bi-caret-down-fill sort-icon"></i>
+          </th>
+          <th class="status-col sortable" data-sort-column="status">
+            Status <i class="bi bi-caret-down-fill sort-icon"></i>
+          </th>
+          <th class="category-col sortable" data-sort-column="category">
+            Category <i class="bi bi-caret-down-fill sort-icon"></i>
+          </th>
+          <th class="office-col sortable" data-sort-column="resp_center">
+            Office <i class="bi bi-caret-down-fill sort-icon"></i>
+          </th>
         </tr>
       </thead>
       <tbody id="vouchersTableBody">

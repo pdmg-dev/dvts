@@ -41,12 +41,31 @@ def all_vouchers():
 
     total_vouchers = query.count()
 
+    # Sorting setup
+    sort_by = request.args.get("sort_by", "date_received")
+    sort_dir = request.args.get("sort_dir", "desc")
+
+    sort_mapping = {
+        "payee": DisbursementVoucher.payee,
+        "particulars": DisbursementVoucher.particulars,
+        "amount": DisbursementVoucher.amount,
+        "date_received": DisbursementVoucher.date_received,
+        "created_at": DisbursementVoucher.created_at,
+        "updated_at": DisbursementVoucher.updated_at,
+        "category": DisbursementVoucher.category_id,
+        "resp_center": DisbursementVoucher.resp_center_id,
+    }
+
+    sort_column = sort_mapping.get(sort_by, DisbursementVoucher.date_received)
+    if sort_dir == "asc":
+        query = query.order_by(sort_column.asc())
+    else:
+        query = query.order_by(sort_column.desc())
+
     # Pagination setup
     page = request.args.get("page", 1, type=int)
     per_page = 25
-    vouchers = query.order_by(DisbursementVoucher.date_received.desc()).paginate(
-        page=page, per_page=per_page, error_out=False
-    )
+    vouchers = query.paginate(page=page, per_page=per_page, error_out=False)
 
     # Item numbers for pagination (first and last on the current page)
     first_item = (vouchers.page - 1) * vouchers.per_page + 1
@@ -66,6 +85,8 @@ def all_vouchers():
         last_item=last_item,
         categories=categories,
         resp_centers=resp_centers,
+        sort_by=sort_by,
+        sort_dir=sort_dir,
         filters={
             "category": category_id,
             "resp_center": resp_center_id,

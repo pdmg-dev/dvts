@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     initTableArrowNavigation();
     initFilterPanel();
     initExportButton();
+    initTableSorting();
 });
 
 // Re-initialize functionalities after HTMX content swap
@@ -15,6 +16,7 @@ document.addEventListener("htmx:afterSwap", (evt) => {
         initSelectAllVouchers();
         initTableScroll();
         initTableArrowNavigation();
+        initTableSorting();
     }
     // Only rebind if the swapped content contains your split button
     if (evt.target.querySelector("#splitBtn")) {
@@ -499,5 +501,88 @@ function initFilterDatePickers() {
     if (dateToValue && dateToValue.value) {
         pickerTo.viewDate(new tempusDominus.DateTime(dateToValue.value));
         dateToInput.value = dateToValue.value;
+    }
+}
+
+// Table Sorting
+function initTableSorting() {
+    const sortableHeaders = document.querySelectorAll(
+        ".vouchers-table th.sortable",
+    );
+
+    sortableHeaders.forEach((header) => {
+        header.addEventListener("click", () => {
+            const sortColumn = header.getAttribute("data-sort-column");
+            const currentSort = new URLSearchParams(window.location.search).get(
+                "sort_by",
+            );
+            const currentDir = new URLSearchParams(window.location.search).get(
+                "sort_dir",
+            );
+
+            let newDir = "asc"; // Default to ascending
+
+            // Toggle direction if clicking the same column
+            if (currentSort === sortColumn && currentDir === "asc") {
+                newDir = "desc";
+            }
+
+            // Build URL with sort parameters
+            const url = new URL(window.location);
+            url.searchParams.set("sort_by", sortColumn);
+            url.searchParams.set("sort_dir", newDir);
+
+            // Update browser history with new URL
+            window.history.pushState({}, "", url.toString());
+
+            // Trigger HTMX request
+            htmx.ajax("GET", url.toString(), "#content");
+
+            // Update UI immediately
+            updateSortIndicators(sortColumn, newDir);
+        });
+    });
+
+    // Set initial sort indicators based on current URL
+    const currentSort = new URLSearchParams(window.location.search).get(
+        "sort_by",
+    );
+    const currentDir = new URLSearchParams(window.location.search).get(
+        "sort_dir",
+    );
+
+    if (currentSort) {
+        updateSortIndicators(currentSort, currentDir || "asc");
+    }
+}
+
+function updateSortIndicators(sortColumn, sortDir) {
+    // Remove all active indicators
+    document.querySelectorAll(".vouchers-table th.sortable").forEach((th) => {
+        th.classList.remove("sorted", "sorted-asc", "sorted-desc");
+        const icon = th.querySelector(".sort-icon");
+        if (icon) {
+            icon.classList.remove("bi-caret-up-fill", "bi-caret-down-fill");
+            icon.classList.add("bi-caret-down-fill");
+        }
+    });
+
+    // Add indicator to current sort column
+    const activeHeader = document.querySelector(
+        `.vouchers-table th.sortable[data-sort-column="${sortColumn}"]`,
+    );
+    if (activeHeader) {
+        activeHeader.classList.add("sorted");
+        activeHeader.classList.add(
+            sortDir === "asc" ? "sorted-asc" : "sorted-desc",
+        );
+
+        const icon = activeHeader.querySelector(".sort-icon");
+        if (icon) {
+            icon.classList.remove("bi-caret-up-fill", "bi-caret-down-fill");
+            icon.classList.add(
+                sortDir === "asc" ? "bi-caret-up-fill" : "bi-caret-down-fill",
+            );
+        }
     }
 }

@@ -93,7 +93,7 @@
           type="button"
           class="btn btn-primary flex-fill"
           id="applyFiltersBtn"
-          hx-get="{{ url_for('voucher.all_vouchers') }}"
+          hx-get="{{ url_for('voucher.all_vouchers', sort_by=sort_by, sort_dir=sort_dir) }}"
           hx-target="#content"
           hx-swap="innerHTML"
           hx-push-url="true"

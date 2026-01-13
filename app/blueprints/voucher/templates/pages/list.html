@@ -6,7 +6,7 @@
     {% include 'partials/table.html' %}
   </div>
 
-  {% include 'partials/filter_panel.html' %}
+  <div id="sidePanelContainer">{% include 'partials/filter_panel.html' %}</div>
 
   {% if show_card %}
     <div id="floatingCardContainer">{% include 'fragments/form_card.html' %}</div>

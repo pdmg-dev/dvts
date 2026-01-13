@@ -419,7 +419,9 @@ def view_voucher(voucher_id):  # noqa C901
     if request.headers.get("HX-Request"):
         layout = request.headers.get("HX-Layout")
         if layout == "split":
-            template = "partials/detail.html"
+            # Return a fragment that includes both the split-pane detail
+            # and the detail side-panel (OOB) so HTMX updates both areas.
+            template = "fragments/split_detail_content.html"
         else:
             template = "fragments/detail_content.html"
     else:

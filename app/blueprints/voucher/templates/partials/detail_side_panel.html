@@ -1,0 +1,61 @@
+<div id="sidePanelContainer" hx-swap-oob="true">
+  <div class="detail-side-panel" id="detailPanel">
+    <div class="detail-side-panel-header">
+      <h5 class="mb-0">Voucher</h5>
+      <button class="btn btn-icon" id="closeDetailBtn">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <div class="detail-side-panel-body">
+      <div class="mb-3">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold">Status</div>
+                <small class="text-muted">Current status of this voucher</small>
+              </div>
+              <div>
+                <span class="badge rounded-pill text-bg-primary"
+                  >{{ voucher.status if voucher.status else 'Active' }}</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <form id="detailSidePropertiesForm" method="post" action="#">
+              <input type="hidden" name="voucher_id" value="{{ voucher.id }}" />
+
+              <div class="mb-3">
+                <label class="form-label form-label-sm fw-semibold">Category</label>
+                <div class="form-control form-control-sm">
+                  {{ voucher.category.name if voucher.category else 'N/A' }}
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label form-label-sm fw-semibold">Responsibility Center</label>
+                <div class="form-control form-control-sm">
+                  {{ voucher.resp_center.name if voucher.resp_center else 'N/A' }}
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label form-label-sm fw-semibold">Amount</label>
+                <div class="form-control form-control-sm">
+                  ₱{{ '%.2f'|format(voucher.amount) if voucher.amount is not none else '0.00' }}
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

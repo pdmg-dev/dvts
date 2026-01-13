@@ -128,7 +128,9 @@
 
 .vouchers-table tr {
   box-shadow: inset 0 -1px 0 var(--bs-light-border-subtle);
-  transition: all 0.05s ease;
+  transition:
+    box-shadow 0.05s ease,
+    background-color 0.05s ease;
 }
 
 .vouchers-table tr:focus,
@@ -136,20 +138,20 @@
   outline: none;
   box-shadow:
     inset 4px 0 0 var(--bs-primary),
-    0 1px 3px rgba(0, 0, 0, 0.2),
-    0 1px 3px rgba(0, 0, 0, 0.1),
-    0 0 3px rgba(0, 0, 0, 0.05);
-  transition: all 0.025s ease;
-  border-bottom: none;
+    0 1px 2px rgba(0, 0, 0, 0.06);
+  transition:
+    box-shadow 0.025s ease,
+    background-color 0.025s ease;
 }
 
 .vouchers-table tr:hover {
+  /* subtle outer shadow without affecting layout or height */
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.2),
-    0 1px 3px rgba(0, 0, 0, 0.1),
-    0 0 3px rgba(0, 0, 0, 0.05);
-  transition: all 0.025s ease;
-  border-bottom: none;
+    inset 0 -1px 0 var(--bs-light-border-subtle),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  transition:
+    box-shadow 0.025s ease,
+    background-color 0.025s ease;
   cursor: pointer;
 }
 
@@ -281,6 +283,55 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   will-change: transform;
   font-size: 13px;
   padding-left: 8px;
+}
+
+/* Detail side panel: static, fixed on the right like the filter panel but non-animated */
+.detail-side-panel {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  width: 256px;
+  height: calc(100vh - 64px);
+  background: var(--bs-light);
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  padding-left: 8px;
+}
+
+.detail-side-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  margin-right: 16px;
+  border-bottom: 1px solid var(--bs-secondary-bg-subtle);
+  height: 48px;
+}
+
+.detail-side-panel-body {
+  flex: 1;
+  overflow-y: overlay;
+  overflow-x: hidden;
+  padding-top: 8px;
+  padding-bottom: 16px;
+  padding-right: 16px;
+  scrollbar-gutter: stable overlay !important;
+}
+
+/* Animated entrance for detail panel to mask HTMX timing */
+.detail-side-panel {
+  /* Start off-screen to the right like the filter panel; use GPU accel */
+  transform: translateX(256px) translateZ(0);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.detail-side-panel.active {
+  transform: translateX(0);
 }
 
 .filter-panel.active {

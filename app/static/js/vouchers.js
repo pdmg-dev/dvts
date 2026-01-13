@@ -34,7 +34,64 @@ document.addEventListener("DOMContentLoaded", function () {
     initFilterPanel();
     initExportButton();
     initTableSorting();
+    initPreemptiveDetailOpen();
 });
+
+// Preemptively open the right-side space when a voucher row is clicked so
+// the main content push is immediate rather than waiting for the OOB swap.
+function initPreemptiveDetailOpen() {
+    const vouchersTable = document.getElementById("vouchersTable");
+    if (!vouchersTable) return;
+
+    // Prevent duplicate binding
+    if (vouchersTable.dataset.detailPre === "true") return;
+    vouchersTable.dataset.detailPre = "true";
+
+    vouchersTable.addEventListener("click", (e) => {
+        // Ignore clicks originating from inputs/buttons meant to toggle selection
+        const tr = e.target.closest("tr");
+        if (!tr) return;
+
+        const hxGet = tr.getAttribute("hx-get");
+        if (!hxGet) return;
+
+        // Only act on clicks that navigate to a voucher detail URL
+        if (!/\/voucher\//.test(hxGet)) return;
+
+        const mainEl = document.querySelector("main");
+        const prevOpen = localStorage.getItem("filterPanelOpen") === "true";
+        sessionStorage.setItem(
+            "voucher_prev_filter_open",
+            prevOpen ? "true" : "false",
+        );
+        if (mainEl) mainEl.classList.add("filter-open");
+        const detailPanel = document.querySelector(
+            "#sidePanelContainer .detail-side-panel",
+        );
+        if (detailPanel) detailPanel.classList.add("active");
+    });
+
+    // Also trigger preemptive open on mousedown for snappier UX
+    vouchersTable.addEventListener("mousedown", (e) => {
+        const tr = e.target.closest("tr");
+        if (!tr) return;
+        const hxGet = tr.getAttribute("hx-get");
+        if (!hxGet) return;
+        if (!/\/voucher\//.test(hxGet)) return;
+
+        const mainEl = document.querySelector("main");
+        const prevOpen = localStorage.getItem("filterPanelOpen") === "true";
+        sessionStorage.setItem(
+            "voucher_prev_filter_open",
+            prevOpen ? "true" : "false",
+        );
+        if (mainEl) mainEl.classList.add("filter-open");
+        const detailPanel = document.querySelector(
+            "#sidePanelContainer .detail-side-panel",
+        );
+        if (detailPanel) detailPanel.classList.add("active");
+    });
+}
 
 // Re-initialize functionalities after HTMX content swap
 document.addEventListener("htmx:afterSwap", (evt) => {
@@ -83,8 +140,104 @@ document.addEventListener("htmx:afterSwap", (evt) => {
     if (evt.target.querySelector("#filterBtn")) {
         initFilterPanel();
     }
+
+    // If a detail side panel was swapped in (OOB), ensure the main content
+    // makes room for it even if the filter was previously closed. Preserve
+    // the user's previous filter-open state in sessionStorage so it can be
+    // restored when navigating back to the list.
+    const mainEl = document.querySelector("main");
+    const hasDetailSide = document.querySelector(
+        "#sidePanelContainer .detail-side-panel",
+    );
+    if (hasDetailSide) {
+        const prevOpen = localStorage.getItem("filterPanelOpen") === "true";
+        sessionStorage.setItem(
+            "voucher_prev_filter_open",
+            prevOpen ? "true" : "false",
+        );
+        if (mainEl) mainEl.classList.add("filter-open");
+        const detailPanel = document.querySelector(
+            "#sidePanelContainer .detail-side-panel",
+        );
+        if (detailPanel) detailPanel.classList.add("active");
+    }
+
+    // When we swap in the vouchers table (returning to list), restore the
+    // previous filter-open state saved earlier and reinitialize the panel.
+    if (evt.target.querySelector("#vouchersTable")) {
+        const prev = sessionStorage.getItem("voucher_prev_filter_open");
+        if (prev === "false") {
+            if (mainEl) mainEl.classList.remove("filter-open");
+            const detailPanel = document.querySelector(
+                "#sidePanelContainer .detail-side-panel",
+            );
+            if (detailPanel) detailPanel.classList.remove("active");
+        } else if (prev === "true") {
+            if (mainEl) mainEl.classList.add("filter-open");
+        }
+
+        // Allow the DOM to settle then re-init filter panel bindings (if present)
+        setTimeout(() => {
+            initFilterPanel();
+            // Ensure the filter panel's visual state matches saved preference
+            const filterPanel = document.getElementById("filterPanel");
+            const savedOpen =
+                localStorage.getItem("filterPanelOpen") === "true";
+            if (filterPanel) {
+                filterPanel.classList.toggle("active", savedOpen);
+            }
+        }, 30);
+    }
     if (evt.target.querySelector("#exportDropdown")) {
         initExportButton();
+    }
+});
+
+// Ensure OOB swaps that arrive slightly later are also handled.
+document.addEventListener("htmx:afterOnLoad", (evt) => {
+    const mainEl = document.querySelector("main");
+
+    // If a detail side panel is present anywhere, make room for it.
+    const hasDetailSide = document.querySelector(
+        "#sidePanelContainer .detail-side-panel",
+    );
+    if (hasDetailSide) {
+        const prevOpen = localStorage.getItem("filterPanelOpen") === "true";
+        sessionStorage.setItem(
+            "voucher_prev_filter_open",
+            prevOpen ? "true" : "false",
+        );
+        if (mainEl) mainEl.classList.add("filter-open");
+        const detailPanel = document.querySelector(
+            "#sidePanelContainer .detail-side-panel",
+        );
+        if (detailPanel) detailPanel.classList.add("active");
+        return;
+    }
+
+    // If the vouchers table exists, restore previous state and re-init
+    const hasTable = document.querySelector("#vouchersTable");
+    if (hasTable) {
+        const prev = sessionStorage.getItem("voucher_prev_filter_open");
+        if (prev === "false") {
+            if (mainEl) mainEl.classList.remove("filter-open");
+            const detailPanel = document.querySelector(
+                "#sidePanelContainer .detail-side-panel",
+            );
+            if (detailPanel) detailPanel.classList.remove("active");
+        } else if (prev === "true") {
+            if (mainEl) mainEl.classList.add("filter-open");
+        }
+
+        setTimeout(() => {
+            initFilterPanel();
+            const filterPanel = document.getElementById("filterPanel");
+            const savedOpen =
+                localStorage.getItem("filterPanelOpen") === "true";
+            if (filterPanel) {
+                filterPanel.classList.toggle("active", savedOpen);
+            }
+        }, 30);
     }
 });
 

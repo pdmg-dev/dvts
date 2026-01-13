@@ -125,13 +125,13 @@
     {% block main %}
       <main class="d-flex position-absolute me-3 mb-3 overflow-hidden">
         {% block content %}
-          {% if show_card %}
-            <div id="floatingCardContainer">{% include 'fragments/form_card.html' %}</div>
-          {% else %}
-            <div id="floatingCardContainer"></div>
-          {% endif %}
         {% endblock %}
       </main>
+
+      <!-- Floating card container outside main content to avoid HTMX swap interference -->
+      {% if request.blueprint == 'voucher' %}
+        <div id="floatingCardContainer"></div>
+      {% endif %}
     {% endblock %}
 
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js')}}"></script>

@@ -216,6 +216,9 @@ function initPreemptiveDetailOpen() {
 
 // Re-initialize functionalities after HTMX content swap
 document.addEventListener("htmx:afterSwap", (evt) => {
+    // Skip if swapping into floatingCardContainer (new voucher form)
+    if (evt.target.id === "floatingCardContainer") return;
+
     // Check if this is the vouchers page content
     const isVouchersSwap =
         !!evt.target.querySelector("#vouchersTable") ||
@@ -257,8 +260,11 @@ document.addEventListener("htmx:afterSwap", (evt) => {
     if (evt.target.querySelector("#splitBtn")) {
         initSplitLayout();
     }
-    // Rebind filter panel after HTMX swaps
-    if (evt.target.querySelector("#filterBtn")) {
+    // Rebind filter panel after HTMX swaps (but only if swapping into #content, not #floatingCardContainer)
+    if (
+        evt.target.querySelector("#filterBtn") &&
+        evt.target.id !== "floatingCardContainer"
+    ) {
         initFilterPanel();
     }
 
@@ -338,6 +344,14 @@ document.addEventListener("htmx:afterSwap", (evt) => {
 
 // Ensure OOB swaps that arrive slightly later are also handled.
 document.addEventListener("htmx:afterOnLoad", (evt) => {
+    // Skip if we're loading into floatingCardContainer (new voucher form)
+    if (
+        evt.detail &&
+        evt.detail.target &&
+        evt.detail.target.id === "floatingCardContainer"
+    )
+        return;
+
     const mainEl = document.querySelector("main");
 
     // If split layout is active, skip side-panel activation logic

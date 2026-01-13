@@ -4,12 +4,24 @@
     <button
       type="button"
       class="btn btn-primary btn-main d-flex align-items-center justify-content-center gap-1 mt-1 mb-2"
+      id="newVoucherBtn"
       href="{{ url_for('voucher.new_voucher') }}"
       hx-get="{{ url_for('voucher.new_voucher') }}"
       hx-target="#floatingCardContainer"
       hx-swap="innerHTML"
       hx-push-url="true"
       hx-trigger="click[!document.getElementById('floatingCardContainer')?.textContent.trim()]"
+      onclick="
+        const filterPanel = document.getElementById('filterPanel');
+        const filterBtn = document.getElementById('filterBtn');
+        const mainContent = document.querySelector('main');
+        if (filterPanel) {
+          filterPanel.classList.remove('active');
+          if (filterBtn) filterBtn.classList.remove('active');
+          if (mainContent) mainContent.classList.remove('filter-open');
+          localStorage.setItem('filterPanelOpen', 'false');
+        }
+      "
     >
       <i class="bi bi-plus fs-2"></i>
       <span class="fw-medium">New Voucher</span>

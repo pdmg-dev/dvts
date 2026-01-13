@@ -1,13 +1,268 @@
-<div>{{ voucher.payee }}</div>
-<div>{{ voucher.particulars }}</div>
-<div>{{ voucher.amount }}</div>
-<div>{{ voucher.category.name }}</div>
-<div>{{ voucher.resp_center.name }}</div>
-<div>{{ voucher.date_received }}</div>
-<div>{{ voucher.attachments }}</div>
-  {% for attachment in voucher.attachments %}
-    <div>{{ attachment.filename }}</div>
-  {% endfor %}
+<div class="d-flex flex-column h-100">
+  <!-- Detail Header -->
+  <div class="bg-light border-bottom p-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <i class="bi bi-receipt text-primary fs-4"></i>
+        <div>
+          <h5 class="mb-1">{{ voucher.payee }}</h5>
+          <small class="text-muted">DV #{{ voucher.dv_number or 'N/A' }} • ₱{{ "%.2f"|format(voucher.amount) }}</small>
+        </div>
+      </div>
+      <span class="badge rounded-pill text-bg-primary">Active</span>
+    </div>
+  </div>
+
+  <!-- Tabs Navigation -->
+  <ul class="nav nav-tabs border-bottom px-4" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link active"
+        id="details-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#details"
+        type="button"
+        role="tab"
+        aria-controls="details"
+        aria-selected="true"
+      >
+        <i class="bi bi-info-circle me-2"></i>Details
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="attachments-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#attachments"
+        type="button"
+        role="tab"
+        aria-controls="attachments"
+        aria-selected="false"
+      >
+        <i class="bi bi-paperclip me-2"></i>Attachments
+        {% if voucher.attachments|length > 0 %}
+          <span class="badge bg-primary ms-2">{{ voucher.attachments|length }}</span>
+        {% endif %}
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="properties-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#properties"
+        type="button"
+        role="tab"
+        aria-controls="properties"
+        aria-selected="false"
+      >
+        <i class="bi bi-sliders me-2"></i>Properties
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button
+        class="nav-link"
+        id="activity-tab"
+        data-bs-toggle="tab"
+        data-bs-target="#activity"
+        type="button"
+        role="tab"
+        aria-controls="activity"
+        aria-selected="false"
+      >
+        <i class="bi bi-clock-history me-2"></i>Activity
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tabs Content -->
+  <div class="tab-content flex-grow-1 overflow-auto">
+    <!-- Details Tab -->
+    <div class="tab-pane fade show active p-4" id="details" role="tabpanel" aria-labelledby="details-tab">
+      <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <tbody>
+              <tr>
+                <td class="fw-semibold text-muted" style="width: 25%;">Payee</td>
+                <td>{{ voucher.payee }}</td>
+              </tr>
+              <tr>
+                <td class="fw-semibold text-muted">Address</td>
+                <td>{{ voucher.address or 'N/A' }}</td>
+              </tr>
+              <tr>
+                <td class="fw-semibold text-muted">Particulars</td>
+                <td>{{ voucher.particulars }}</td>
+              </tr>
+              <tr>
+                <td class="fw-semibold text-muted">Amount</td>
+                <td><span class="badge bg-success">₱{{ "%.2f"|format(voucher.amount) }}</span></td>
+              </tr>
+              <tr>
+                <td class="fw-semibold text-muted">Mode of Payment</td>
+                <td>{{ voucher.mode_of_payment }}</td>
+              </tr>
+              <tr>
+                <td class="fw-semibold text-muted">OBR Number</td>
+                <td>{{ voucher.obr_number or 'N/A' }}</td>
+              </tr>
+              <tr>
+                <td class="fw-semibold text-muted">Date Received</td>
+                <td>{{ voucher.date_received.strftime('%Y-%m-%d') if voucher.date_received else 'N/A' }}</td>
+              </tr>
+              <tr>
+                <td class="fw-semibold text-muted">Category</td>
+                <td>
+                  {% if voucher.category %}
+                    <span class="badge bg-light text-dark">{{ voucher.category.name }}</span>
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td class="fw-semibold text-muted">Responsibility Center</td>
+                <td>
+                  {% if voucher.resp_center %}
+                    {{ voucher.resp_center.name }}
+                  {% else %}
+                    N/A
+                  {% endif %}
+                </td>
+              </tr>
+              <tr>
+                <td class="fw-semibold text-muted">Created</td>
+                <td>
+                  <small class="text-muted"
+                    >{{ voucher.created_at.strftime('%Y-%m-%d %H:%M') if voucher.created_at else 'N/A' }}</small
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td class="fw-semibold text-muted">Updated</td>
+                <td>
+                  <small class="text-muted"
+                    >{{ voucher.updated_at.strftime('%Y-%m-%d %H:%M') if voucher.updated_at else 'N/A' }}</small
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attachments Tab -->
+    <div class="tab-pane fade p-4" id="attachments" role="tabpanel" aria-labelledby="attachments-tab">
+      {% if voucher.attachments|length > 0 %}
+        <div class="row g-3">
+          {% for attachment in voucher.attachments %}
+            <div class="col-12">
+              <div class="card border-0 shadow-sm">
+                <div class="card-body d-flex justify-content-between align-items-center p-3">
+                  <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-file-earmark fs-4 text-primary"></i>
+                    <div>
+                      <div class="fw-semibold">{{ attachment.filename }}</div>
+                      <small class="text-muted"
+                        >{{ attachment.created_at.strftime('%Y-%m-%d') if attachment.created_at else 'N/A' }}</small
+                      >
+                    </div>
+                  </div>
+                  <button class="btn btn-sm btn-outline-primary"><i class="bi bi-download"></i> Download</button>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-center py-5">
+          <i class="bi bi-inbox fs-1 text-muted d-block mb-3"></i>
+          <p class="text-muted">No attachments yet</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Properties Tab -->
+    <div class="tab-pane fade p-4" id="properties" role="tabpanel" aria-labelledby="properties-tab">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <form>
+            <div class="mb-3">
+              <label for="category" class="form-label">Category</label>
+              <select class="form-select" id="category">
+                <option selected>{{ voucher.category.name if voucher.category else 'Select category' }}</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="resp_center" class="form-label">Responsibility Center</label>
+              <select class="form-select" id="resp_center">
+                <option selected>{{ voucher.resp_center.name if voucher.resp_center else 'Select office' }}</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="status" class="form-label">Status</label>
+              <select class="form-select" id="status">
+                <option>Draft</option>
+                <option selected>Submitted</option>
+                <option>Approved</option>
+                <option>Released</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+              <i class="bi bi-check-circle me-2"></i>Save Changes
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activity Tab -->
+    <div class="tab-pane fade p-4" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div class="timeline">
+            <div class="timeline-item mb-4">
+              <div class="d-flex gap-3">
+                <div class="flex-shrink-0">
+                  <span class="badge rounded-pill bg-primary p-2">
+                    <i class="bi bi-plus-circle"></i>
+                  </span>
+                </div>
+                <div class="flex-grow-1">
+                  <h6 class="mb-1">Voucher Created</h6>
+                  <small class="text-muted"
+                    >{{ voucher.created_at.strftime('%Y-%m-%d %H:%M') if voucher.created_at else 'N/A' }}</small
+                  >
+                </div>
+              </div>
+            </div>
+
+            {% if voucher.updated_at != voucher.created_at %}
+              <div class="timeline-item">
+                <div class="d-flex gap-3">
+                  <div class="flex-shrink-0">
+                    <span class="badge rounded-pill bg-success p-2">
+                      <i class="bi bi-pencil-circle"></i>
+                    </span>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h6 class="mb-1">Voucher Updated</h6>
+                    <small class="text-muted"
+                      >{{ voucher.updated_at.strftime('%Y-%m-%d %H:%M') if voucher.updated_at else 'N/A' }}</small
+                    >
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<div>{{ voucher.created_at }}</div>
-<div>{{ voucher.updated_at }}</div>

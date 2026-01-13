@@ -87,14 +87,15 @@ body {
 main {
   top: 64px;
   left: 16px;
-  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  right: 0 !important;
+  right: 0;
   bottom: 0;
+  transition:
+    left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 main.sidebar-open {
   left: 256px;
-  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 main.no-transition {

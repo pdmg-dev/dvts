@@ -280,7 +280,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   flex-direction: column;
   will-change: transform;
   font-size: 13px;
-  padding-left: 8px  ;
+  padding-left: 8px;
 }
 
 .filter-panel.active {
@@ -289,12 +289,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 
 /* Push main content when filter panel is open */
 main.filter-open {
-  right: 256px !important;
-  transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-main {
-  transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  right: 256px;
 }
 
 .filter-panel.no-transition {

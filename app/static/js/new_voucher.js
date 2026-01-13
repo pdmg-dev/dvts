@@ -13,12 +13,16 @@ function closeVoucherCard() {
     if (closeBtn) {
         // Remove existing listeners by cloning and replacing
         const newCloseBtn = closeBtn.cloneNode(true);
-        closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+        if (closeBtn.parentNode) {
+            closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+        }
 
         newCloseBtn.addEventListener("click", function (e) {
             e.preventDefault();
             const container = document.getElementById("floatingCardContainer");
-            container.innerHTML = "";
+            if (container) {
+                container.innerHTML = "";
+            }
             history.pushState({}, "", "/vouchers");
         });
     }
@@ -38,6 +42,9 @@ function initCategoryDropdown() {
     const input = document.getElementById("categoryInput");
     const menu = document.getElementById("categoryMenu");
     const hidden = document.getElementById("category");
+
+    // If necessary elements are missing, bail out silently.
+    if (!input || !menu || !hidden || typeof bootstrap === "undefined") return;
 
     let dropdown = new bootstrap.Dropdown(input);
 
@@ -84,18 +91,21 @@ function initCategoryDropdown() {
         else dropdown.show();
     }
 
-    // Handle selecting an option
-    document.querySelectorAll(".category-option").forEach((item) => {
-        item.addEventListener("click", function (e) {
-            e.preventDefault();
+    // Handle selecting an option (scoped to menu)
+    const options = menu.querySelectorAll(".category-option");
+    if (options && options.length) {
+        options.forEach((item) => {
+            item.addEventListener("click", function (e) {
+                e.preventDefault();
 
-            const value = this.dataset.value;
-            const label = this.innerText.trim();
+                const value = this.dataset.value;
+                const label = this.innerText.trim();
 
-            hidden.value = value;
-            input.value = label;
+                hidden.value = value;
+                input.value = label;
 
-            dropdown.hide();
+                dropdown.hide();
+            });
         });
-    });
+    }
 }

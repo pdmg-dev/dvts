@@ -149,6 +149,7 @@
     <script>
       document.body.addEventListener("postSuccess", () => {
         const modalEl = document.getElementById("adminModal");
+        if (!modalEl) return;
         const modal = bootstrap.Modal.getInstance(modalEl);
 
         if (modal) {
@@ -159,14 +160,15 @@
     </script>
     <script>
       const modalEl = document.getElementById("adminModal");
+      if (modalEl) {
+        modalEl.addEventListener("hide.bs.modal", () => {
+          modalEl.classList.add("fade-out");
+        });
 
-      modalEl.addEventListener("hide.bs.modal", () => {
-        modalEl.classList.add("fade-out");
-      });
-
-      modalEl.addEventListener("hidden.bs.modal", () => {
-        modalEl.classList.remove("fade-out");
-      });
+        modalEl.addEventListener("hidden.bs.modal", () => {
+          modalEl.classList.remove("fade-out");
+        });
+      }
     </script>
     <script>
       var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

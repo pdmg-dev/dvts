@@ -58,17 +58,48 @@ function initPreemptiveDetailOpen() {
         // Only act on clicks that navigate to a voucher detail URL
         if (!/\/voucher\//.test(hxGet)) return;
 
+        // If split layout is active, don't preemptively open the right-side
+        // detail panel — detail content will load into the split pane instead.
+        const splitWrapper = document.querySelector(".table-split-wrapper");
+        const splitActive =
+            splitWrapper && splitWrapper.classList.contains("split-active");
+        if (splitActive) return;
+
         const mainEl = document.querySelector("main");
-        const prevOpen = localStorage.getItem("filterPanelOpen") === "true";
+        const filterPanel = document.getElementById("filterPanel");
+        // Prefer live DOM state, fall back to persisted preference
+        const prevOpen = filterPanel
+            ? filterPanel.classList.contains("active")
+            : localStorage.getItem("filterPanelOpen") === "true";
         sessionStorage.setItem(
             "voucher_prev_filter_open",
             prevOpen ? "true" : "false",
         );
-        if (mainEl) mainEl.classList.add("filter-open");
+
+        // If the filter panel is open, prepare to swap its HTML with the
+        // incoming detail content instead of animating the detail panel.
+        if (prevOpen && filterPanel) {
+            sessionStorage.setItem(
+                "voucher_saved_filter_html",
+                filterPanel.outerHTML,
+            );
+            sessionStorage.setItem("voucher_do_swap", "true");
+        } else {
+            sessionStorage.removeItem("voucher_do_swap");
+            sessionStorage.removeItem("voucher_saved_filter_html");
+        }
+
         const detailPanel = document.querySelector(
             "#sidePanelContainer .detail-side-panel",
         );
-        if (detailPanel) detailPanel.classList.add("active");
+        // If filter was open, don't animate detail; animation will be skipped
+        // and content swap will be handled after HTMX swap completes.
+        if (!prevOpen) {
+            if (mainEl) mainEl.classList.add("filter-open");
+            if (detailPanel) detailPanel.classList.add("active");
+        } else {
+            if (mainEl) mainEl.classList.add("filter-open");
+        }
     });
 
     // Also trigger preemptive open on mousedown for snappier UX
@@ -79,17 +110,42 @@ function initPreemptiveDetailOpen() {
         if (!hxGet) return;
         if (!/\/voucher\//.test(hxGet)) return;
 
+        // If split layout is active, let the split pane handle the load.
+        const splitWrapper = document.querySelector(".table-split-wrapper");
+        const splitActive =
+            splitWrapper && splitWrapper.classList.contains("split-active");
+        if (splitActive) return;
+
         const mainEl = document.querySelector("main");
-        const prevOpen = localStorage.getItem("filterPanelOpen") === "true";
+        const filterPanel = document.getElementById("filterPanel");
+        const prevOpen = filterPanel
+            ? filterPanel.classList.contains("active")
+            : localStorage.getItem("filterPanelOpen") === "true";
         sessionStorage.setItem(
             "voucher_prev_filter_open",
             prevOpen ? "true" : "false",
         );
-        if (mainEl) mainEl.classList.add("filter-open");
+
+        if (prevOpen && filterPanel) {
+            sessionStorage.setItem(
+                "voucher_saved_filter_html",
+                filterPanel.outerHTML,
+            );
+            sessionStorage.setItem("voucher_do_swap", "true");
+        } else {
+            sessionStorage.removeItem("voucher_do_swap");
+            sessionStorage.removeItem("voucher_saved_filter_html");
+        }
+
         const detailPanel = document.querySelector(
             "#sidePanelContainer .detail-side-panel",
         );
-        if (detailPanel) detailPanel.classList.add("active");
+        if (!prevOpen) {
+            if (mainEl) mainEl.classList.add("filter-open");
+            if (detailPanel) detailPanel.classList.add("active");
+        } else {
+            if (mainEl) mainEl.classList.add("filter-open");
+        }
     });
 }
 
@@ -146,20 +202,75 @@ document.addEventListener("htmx:afterSwap", (evt) => {
     // the user's previous filter-open state in sessionStorage so it can be
     // restored when navigating back to the list.
     const mainEl = document.querySelector("main");
-    const hasDetailSide = document.querySelector(
+    // If split layout is active, skip any side-panel activation/swap logic
+    // because details should appear inside the split pane instead.
+    const splitWrapper = document.querySelector(".table-split-wrapper");
+    const splitActive =
+        splitWrapper && splitWrapper.classList.contains("split-active");
+    const detailPanel = document.querySelector(
         "#sidePanelContainer .detail-side-panel",
     );
-    if (hasDetailSide) {
-        const prevOpen = localStorage.getItem("filterPanelOpen") === "true";
-        sessionStorage.setItem(
-            "voucher_prev_filter_open",
-            prevOpen ? "true" : "false",
-        );
-        if (mainEl) mainEl.classList.add("filter-open");
-        const detailPanel = document.querySelector(
-            "#sidePanelContainer .detail-side-panel",
-        );
-        if (detailPanel) detailPanel.classList.add("active");
+    // Only treat a detail panel as present if it contains meaningful content
+    // (prevents opening an empty placeholder that causes toolbar overlap).
+    const detailHasContent =
+        detailPanel && detailPanel.innerHTML.trim().length > 0;
+    if (detailHasContent && !splitActive) {
+        // Determine whether we should swap content instead of animating
+        const prevOpen =
+            sessionStorage.getItem("voucher_prev_filter_open") === "true" ||
+            localStorage.getItem("filterPanelOpen") === "true";
+
+        // If the filter was open when the request started and we set the
+        // swap flag, perform an HTML swap: place the incoming detail HTML
+        // into the visible filter panel and restore the saved filter HTML
+        // into the swapped-in detail panel. This avoids any animation.
+        const doSwap = sessionStorage.getItem("voucher_do_swap") === "true";
+        if (prevOpen && doSwap) {
+            const saved = sessionStorage.getItem("voucher_saved_filter_html");
+            try {
+                const sideContainer =
+                    document.getElementById("sidePanelContainer");
+                if (saved && sideContainer && detailPanel) {
+                    // Parse saved filter HTML into an element
+                    const tmp = document.createElement("div");
+                    tmp.innerHTML = saved;
+                    const savedFilterEl = tmp.firstElementChild;
+
+                    // Extract inner HTMLs
+                    const incomingDetailHtml = detailPanel.innerHTML;
+                    const savedFilterHtml = savedFilterEl
+                        ? savedFilterEl.innerHTML
+                        : "";
+
+                    // Replace detailPanel's content with saved filter content
+                    detailPanel.innerHTML = savedFilterHtml;
+
+                    // Append a new filterPanel element (reconstituted) and
+                    // put the incoming detail HTML into it so the user sees
+                    // the voucher detail immediately where the filter was.
+                    if (savedFilterEl) {
+                        savedFilterEl.innerHTML = incomingDetailHtml;
+                        sideContainer.appendChild(savedFilterEl);
+                    }
+
+                    // Ensure main layout shows the filter area (now containing detail)
+                    if (mainEl) mainEl.classList.add("filter-open");
+                }
+            } finally {
+                // Clean up swap flags
+                sessionStorage.removeItem("voucher_do_swap");
+                sessionStorage.removeItem("voucher_saved_filter_html");
+            }
+        } else {
+            // Normal behavior: show the detail panel and make room
+            const prev = localStorage.getItem("filterPanelOpen") === "true";
+            sessionStorage.setItem(
+                "voucher_prev_filter_open",
+                prev ? "true" : "false",
+            );
+            if (mainEl) mainEl.classList.add("filter-open");
+            detailPanel.classList.add("active");
+        }
     }
 
     // When we swap in the vouchers table (returning to list), restore the
@@ -198,20 +309,53 @@ document.addEventListener("htmx:afterOnLoad", (evt) => {
     const mainEl = document.querySelector("main");
 
     // If a detail side panel is present anywhere, make room for it.
-    const hasDetailSide = document.querySelector(
+    const detailPanelOnLoad = document.querySelector(
         "#sidePanelContainer .detail-side-panel",
     );
-    if (hasDetailSide) {
-        const prevOpen = localStorage.getItem("filterPanelOpen") === "true";
-        sessionStorage.setItem(
-            "voucher_prev_filter_open",
-            prevOpen ? "true" : "false",
-        );
-        if (mainEl) mainEl.classList.add("filter-open");
-        const detailPanel = document.querySelector(
-            "#sidePanelContainer .detail-side-panel",
-        );
-        if (detailPanel) detailPanel.classList.add("active");
+    const detailHasContentOnLoad =
+        detailPanelOnLoad && detailPanelOnLoad.innerHTML.trim().length > 0;
+    if (detailHasContentOnLoad) {
+        const prevOpen =
+            sessionStorage.getItem("voucher_prev_filter_open") === "true" ||
+            localStorage.getItem("filterPanelOpen") === "true";
+        const doSwap = sessionStorage.getItem("voucher_do_swap") === "true";
+        if (prevOpen && doSwap) {
+            const saved = sessionStorage.getItem("voucher_saved_filter_html");
+            try {
+                const sideContainer =
+                    document.getElementById("sidePanelContainer");
+                if (saved && sideContainer && detailPanelOnLoad) {
+                    const tmp = document.createElement("div");
+                    tmp.innerHTML = saved;
+                    const savedFilterEl = tmp.firstElementChild;
+
+                    const incomingDetailHtml = detailPanelOnLoad.innerHTML;
+                    const savedFilterHtml = savedFilterEl
+                        ? savedFilterEl.innerHTML
+                        : "";
+
+                    detailPanelOnLoad.innerHTML = savedFilterHtml;
+                    if (savedFilterEl) {
+                        savedFilterEl.innerHTML = incomingDetailHtml;
+                        sideContainer.appendChild(savedFilterEl);
+                    }
+
+                    if (mainEl) mainEl.classList.add("filter-open");
+                }
+            } finally {
+                sessionStorage.removeItem("voucher_do_swap");
+                sessionStorage.removeItem("voucher_saved_filter_html");
+            }
+        } else {
+            sessionStorage.setItem(
+                "voucher_prev_filter_open",
+                localStorage.getItem("filterPanelOpen") === "true"
+                    ? "true"
+                    : "false",
+            );
+            if (mainEl) mainEl.classList.add("filter-open");
+            detailPanelOnLoad.classList.add("active");
+        }
         return;
     }
 

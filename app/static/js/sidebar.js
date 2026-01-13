@@ -1,9 +1,54 @@
+// Sidebar toggler and active-link helper
 sidebarToggler();
 setActiveLink();
 
 document.body.addEventListener("htmx:afterOnLoad", function (evt) {
     setActiveLink();
 });
+
+// Ensure sidebar links reflect current location. Safe no-op when sidebar missing.
+function setActiveLink() {
+    try {
+        const sidebar = document.getElementById("sidebar");
+        if (!sidebar) return;
+
+        // Remove any previous active markers
+        sidebar
+            .querySelectorAll("a.active")
+            .forEach((a) => a.classList.remove("active"));
+
+        const current = window.location.pathname + window.location.search;
+
+        // Prefer exact match then startsWith
+        const links = Array.from(sidebar.querySelectorAll("a[href]") || []);
+        let matched = null;
+        for (const a of links) {
+            const href = a.getAttribute("href");
+            if (!href) continue;
+            // Normalize
+            if (href === current || href === window.location.pathname) {
+                matched = a;
+                break;
+            }
+        }
+
+        if (!matched) {
+            for (const a of links) {
+                const href = a.getAttribute("href");
+                if (!href) continue;
+                if (current.startsWith(href)) {
+                    matched = a;
+                    break;
+                }
+            }
+        }
+
+        if (matched) matched.classList.add("active");
+    } catch (e) {
+        // Don't crash the page if something unexpected happens
+        console.warn("setActiveLink error:", e);
+    }
+}
 
 function sidebarToggler() {
     const sidebarToggle = document.getElementById("sidebarToggle");

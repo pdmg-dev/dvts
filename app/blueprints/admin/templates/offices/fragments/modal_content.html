@@ -46,7 +46,7 @@
     </form>
 
     <script>
-      document.getElementById("adminModal").addEventListener("shown.bs.modal", function () {
+      document.getElementById("adminModal")?.addEventListener("shown.bs.modal", function () {
         const input = document.querySelector("#officeNameInput");
         if (input) {
           // Move cursor to the end of the input value

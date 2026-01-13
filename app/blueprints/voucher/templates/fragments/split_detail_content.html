@@ -1,4 +1,4 @@
+{# In split layout mode, only render the detail content for the split pane.
+   Do NOT include the side panel OOB swap - the filter panel should persist
+   in the side panel if it was open when split layout was activated. #}
 {% include 'partials/detail.html' %}
-
-{# Also replace side panel via OOB when in split layout #}
-{% include 'partials/detail_side_panel.html' %}

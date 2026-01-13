@@ -457,10 +457,16 @@ def view_voucher(voucher_id):  # noqa C901
 
     if request.headers.get("HX-Request"):
         layout = request.headers.get("HX-Layout")
+        skip_oob = request.headers.get("X-Skip-OOB-Swap") == "true"
+
         if layout == "split":
             # Return a fragment that includes both the split-pane detail
             # and the detail side-panel (OOB) so HTMX updates both areas.
             template = "fragments/split_detail_content.html"
+        elif skip_oob:
+            # When filter panel is open and user clicks a row, return only detail
+            # content without the OOB side panel swap
+            template = "fragments/detail_content_no_oob.html"
         else:
             template = "fragments/detail_content.html"
     else:

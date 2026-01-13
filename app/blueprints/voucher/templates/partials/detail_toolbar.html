@@ -19,7 +19,7 @@
         class="btn btn-icon"
         hx-get="{{ url_for('voucher.view_voucher', voucher_id=prev_voucher.id, page=page or 1, category=filters.category, resp_center=filters.resp_center, date_from=filters.date_from, date_to=filters.date_to, payee=filters.payee, amount_min=filters.amount_min, amount_max=filters.amount_max, created_from=filters.created_from, created_to=filters.created_to, modified_from=filters.modified_from, modified_to=filters.modified_to, sort_by=sort_by or 'date_received', sort_dir=sort_dir or 'desc') }}"
         hx-target="#content"
-        hx-swap="innerHTML"
+        hx-swap="innerHTML settle:0"
         hx-push-url="true"
       >
         <i class="bi bi-chevron-left"></i>
@@ -35,7 +35,7 @@
         class="btn btn-icon"
         hx-get="{{ url_for('voucher.view_voucher', voucher_id=next_voucher.id, page=page or 1, category=filters.category, resp_center=filters.resp_center, date_from=filters.date_from, date_to=filters.date_to, payee=filters.payee, amount_min=filters.amount_min, amount_max=filters.amount_max, created_from=filters.created_from, created_to=filters.created_to, modified_from=filters.modified_from, modified_to=filters.modified_to, sort_by=sort_by or 'date_received', sort_dir=sort_dir or 'desc') }}"
         hx-target="#content"
-        hx-swap="innerHTML"
+        hx-swap="innerHTML settle:0"
         hx-push-url="true"
       >
         <i class="bi bi-chevron-right"></i>

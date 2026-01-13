@@ -330,6 +330,11 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   backface-visibility: hidden;
 }
 
+/* Disable animation when filter panel is open */
+.detail-side-panel.filter-open {
+  transition: none;
+}
+
 .detail-side-panel.active {
   transform: translateX(0);
 }

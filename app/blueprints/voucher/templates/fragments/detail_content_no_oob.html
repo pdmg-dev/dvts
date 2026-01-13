@@ -1,0 +1,9 @@
+{% include 'partials/detail_toolbar.html' %}
+{% include 'partials/detail.html' %}
+
+{# When filter panel is open and doing a swap, we include the side panel HTML
+   but NOT as an OOB swap. The JavaScript will extract its content and place it
+   in the filter panel instead. This is wrapped in a non-OOB div for JS access. #}
+<div style="display: none;" id="tempDetailPanel">
+  {% include 'partials/detail_side_panel.html' | replace('hx-swap-oob="true"', '') %}
+</div>

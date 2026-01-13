@@ -37,6 +37,71 @@ document.addEventListener("DOMContentLoaded", function () {
     initPreemptiveDetailOpen();
 });
 
+// Add custom header when doing filter-to-detail swap to signal backend
+document.addEventListener("htmx:beforeRequest", (evt) => {
+    if (sessionStorage.getItem("voucher_do_swap") === "true") {
+        evt.detail.xhr.setRequestHeader("X-Skip-OOB-Swap", "true");
+    }
+});
+
+// Process response after request but before swap
+document.addEventListener("htmx:afterRequest", (evt) => {
+    // Only process if we're doing a filter-to-detail swap
+    if (sessionStorage.getItem("voucher_do_swap") !== "true") return;
+
+    const responseText = evt.detail.xhr.responseText;
+
+    // Check if response contains the detail-side-panel
+    if (!responseText.includes("detail-side-panel")) return;
+
+    // Parse response into a temporary container
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = responseText;
+
+    // Find the detail panel
+    const detailPanelHTML = tempDiv.querySelector(".detail-side-panel");
+    if (!detailPanelHTML) return;
+
+    // Get the detail content to swap into filter panel
+    const detailContent = detailPanelHTML.innerHTML;
+
+    // Replace filter panel's content with detail content
+    const filterPanel = document.getElementById("filterPanel");
+    if (filterPanel) {
+        filterPanel.innerHTML = detailContent;
+    }
+
+    // Ensure main layout keeps the panel area open
+    const mainEl = document.querySelector("main");
+    if (mainEl) mainEl.classList.add("filter-open");
+
+    // Find and remove the sidePanelContainer div (the OOB swap container)
+    const sidePanelContainer = tempDiv.querySelector("#sidePanelContainer");
+    if (sidePanelContainer) {
+        sidePanelContainer.remove();
+    }
+
+    // Get the modified HTML
+    const modifiedText = tempDiv.innerHTML;
+
+    // Update the response with the modified text
+    Object.defineProperty(evt.detail.xhr, "responseText", {
+        writable: true,
+        value: modifiedText,
+    });
+
+    // Clean up swap flags - do NOT clean here, let beforeSwap handle it
+});
+
+// Intercept responses to handle manual content swap when filter panel is open
+document.addEventListener("htmx:beforeSwap", (evt) => {
+    // Clean up swap flags after swap is processed
+    if (sessionStorage.getItem("voucher_do_swap") === "true") {
+        sessionStorage.removeItem("voucher_do_swap");
+        sessionStorage.removeItem("voucher_saved_filter_html");
+    }
+});
+
 // Preemptively open the right-side space when a voucher row is clicked so
 // the main content push is immediate rather than waiting for the OOB swap.
 function initPreemptiveDetailOpen() {
@@ -220,48 +285,10 @@ document.addEventListener("htmx:afterSwap", (evt) => {
             sessionStorage.getItem("voucher_prev_filter_open") === "true" ||
             localStorage.getItem("filterPanelOpen") === "true";
 
-        // If the filter was open when the request started and we set the
-        // swap flag, perform an HTML swap: place the incoming detail HTML
-        // into the visible filter panel and restore the saved filter HTML
-        // into the swapped-in detail panel. This avoids any animation.
+        // Note: If voucher_do_swap is set, content swap is handled in beforeSwap
+        // so we skip the detail panel logic here
         const doSwap = sessionStorage.getItem("voucher_do_swap") === "true";
-        if (prevOpen && doSwap) {
-            const saved = sessionStorage.getItem("voucher_saved_filter_html");
-            try {
-                const sideContainer =
-                    document.getElementById("sidePanelContainer");
-                if (saved && sideContainer && detailPanel) {
-                    // Parse saved filter HTML into an element
-                    const tmp = document.createElement("div");
-                    tmp.innerHTML = saved;
-                    const savedFilterEl = tmp.firstElementChild;
-
-                    // Extract inner HTMLs
-                    const incomingDetailHtml = detailPanel.innerHTML;
-                    const savedFilterHtml = savedFilterEl
-                        ? savedFilterEl.innerHTML
-                        : "";
-
-                    // Replace detailPanel's content with saved filter content
-                    detailPanel.innerHTML = savedFilterHtml;
-
-                    // Append a new filterPanel element (reconstituted) and
-                    // put the incoming detail HTML into it so the user sees
-                    // the voucher detail immediately where the filter was.
-                    if (savedFilterEl) {
-                        savedFilterEl.innerHTML = incomingDetailHtml;
-                        sideContainer.appendChild(savedFilterEl);
-                    }
-
-                    // Ensure main layout shows the filter area (now containing detail)
-                    if (mainEl) mainEl.classList.add("filter-open");
-                }
-            } finally {
-                // Clean up swap flags
-                sessionStorage.removeItem("voucher_do_swap");
-                sessionStorage.removeItem("voucher_saved_filter_html");
-            }
-        } else {
+        if (!doSwap) {
             // Normal behavior: show the detail panel and make room
             const prev = localStorage.getItem("filterPanelOpen") === "true";
             sessionStorage.setItem(
@@ -270,6 +297,11 @@ document.addEventListener("htmx:afterSwap", (evt) => {
             );
             if (mainEl) mainEl.classList.add("filter-open");
             detailPanel.classList.add("active");
+
+            // If filter panel is currently open, disable detail panel animation
+            if (prev) {
+                detailPanel.classList.add("filter-open");
+            }
         }
     }
 
@@ -308,6 +340,12 @@ document.addEventListener("htmx:afterSwap", (evt) => {
 document.addEventListener("htmx:afterOnLoad", (evt) => {
     const mainEl = document.querySelector("main");
 
+    // If split layout is active, skip side-panel activation logic
+    const splitWrapper = document.querySelector(".table-split-wrapper");
+    const splitActive =
+        splitWrapper && splitWrapper.classList.contains("split-active");
+    if (splitActive) return;
+
     // If a detail side panel is present anywhere, make room for it.
     const detailPanelOnLoad = document.querySelector(
         "#sidePanelContainer .detail-side-panel",
@@ -324,21 +362,21 @@ document.addEventListener("htmx:afterOnLoad", (evt) => {
             try {
                 const sideContainer =
                     document.getElementById("sidePanelContainer");
-                if (saved && sideContainer && detailPanelOnLoad) {
-                    const tmp = document.createElement("div");
-                    tmp.innerHTML = saved;
-                    const savedFilterEl = tmp.firstElementChild;
+                const filterPanel = document.getElementById("filterPanel");
+                if (
+                    saved &&
+                    sideContainer &&
+                    detailPanelOnLoad &&
+                    filterPanel
+                ) {
+                    // Hide the incoming detail panel immediately (it came via OOB)
+                    detailPanelOnLoad.style.display = "none";
 
-                    const incomingDetailHtml = detailPanelOnLoad.innerHTML;
-                    const savedFilterHtml = savedFilterEl
-                        ? savedFilterEl.innerHTML
-                        : "";
+                    // Replace filter panel's content with detail panel's content
+                    filterPanel.innerHTML = detailPanelOnLoad.innerHTML;
 
-                    detailPanelOnLoad.innerHTML = savedFilterHtml;
-                    if (savedFilterEl) {
-                        savedFilterEl.innerHTML = incomingDetailHtml;
-                        sideContainer.appendChild(savedFilterEl);
-                    }
+                    // Remove the detail panel element entirely
+                    detailPanelOnLoad.remove();
 
                     if (mainEl) mainEl.classList.add("filter-open");
                 }
@@ -355,6 +393,13 @@ document.addEventListener("htmx:afterOnLoad", (evt) => {
             );
             if (mainEl) mainEl.classList.add("filter-open");
             detailPanelOnLoad.classList.add("active");
+
+            // If filter panel is currently open, disable detail panel animation
+            const isFilterOpen =
+                localStorage.getItem("filterPanelOpen") === "true";
+            if (isFilterOpen) {
+                detailPanelOnLoad.classList.add("filter-open");
+            }
         }
         return;
     }
@@ -382,6 +427,36 @@ document.addEventListener("htmx:afterOnLoad", (evt) => {
                 filterPanel.classList.toggle("active", savedOpen);
             }
         }, 30);
+    }
+});
+
+// Handle detail view navigation - ensure side panel updates when next/prev is clicked
+document.addEventListener("htmx:afterSwap", (evt) => {
+    // Only handle swaps where #content is the target (detail view navigation)
+    if (evt.target.id !== "content") return;
+
+    // If split layout is active, skip side-panel updates (detail goes to split pane)
+    const splitWrapper = document.querySelector(".table-split-wrapper");
+    const splitActive =
+        splitWrapper && splitWrapper.classList.contains("split-active");
+    if (splitActive) return;
+
+    // Check if this is a detail view (not the vouchers list)
+    const isDetailView =
+        !!evt.target.querySelector("[class*='detail-side-panel']") ||
+        !!evt.detail.xhr.response?.includes("detailPanel");
+    if (!isDetailView) return;
+
+    // Update the side panel to show the latest voucher details
+    const mainEl = document.querySelector("main");
+    const sidePanelContainer = document.getElementById("sidePanelContainer");
+    const detailPanel = sidePanelContainer?.querySelector(".detail-side-panel");
+
+    if (detailPanel && mainEl) {
+        // Ensure main makes room for the side panel
+        mainEl.classList.add("filter-open");
+        // Activate the detail panel
+        detailPanel.classList.add("active");
     }
 });
 
@@ -617,6 +692,12 @@ function initFilterPanel() {
         filterBtn.classList.toggle("active", active);
         if (mainContent) {
             mainContent.classList.toggle("filter-open", active);
+        }
+
+        // Also add filter-open class to detail panel to disable its animation when filter is open
+        const detailPanel = document.querySelector(".detail-side-panel");
+        if (detailPanel) {
+            detailPanel.classList.toggle("filter-open", active);
         }
 
         localStorage.setItem("filterPanelOpen", active ? "true" : "false");

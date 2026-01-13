@@ -1,22 +1,25 @@
 aside {
+  position: fixed;
   top: 64px;
   left: 0;
-  height: calc(100vh - 64px);
   width: 256px;
+  height: calc(100vh - 64px);
   background-color: var(--bs-light);
-  transition:
-    transform 0.5s ease,
-    opacity 1s ease;
-  transform: translateX(0);
-}
-
-aside.sidebar {
+  box-shadow: none;
+  transform: translateX(-256px);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  will-change: transform;
+  padding-right: 8px;
   z-index: 1040;
 }
 
-aside.collapsed {
-  transform: translateX(-100%);
-  opacity: 0;
+aside.active {
+  transform: translateX(0);
+}
+
+aside.no-transition {
+  transition: none;
 }
 
 .scrollable-sidebar {

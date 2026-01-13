@@ -86,14 +86,19 @@ body {
 
 main {
   top: 64px;
-  left: 256px;
-  right: 0;
+  left: 16px;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  right: 0 !important;
   bottom: 0;
-  transition: left 0.5s ease;
 }
 
-aside.collapsed ~ main {
-  left: 16px;
+main.sidebar-open {
+  left: 256px;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+main.no-transition {
+  transition: none;
 }
 
 .content {

@@ -552,24 +552,41 @@ function initExportButton() {
     const exportUrl = exportDropdown.dataset.exportUrl;
 
     function collectFilters() {
+        // Start with current URL params so we preserve sort/pagination and other query params
+        const params = new URLSearchParams(window.location.search);
         const form = document.getElementById("filterForm");
-        const params = new URLSearchParams();
 
-        if (form) {
-            const fields = [
-                "category",
-                "resp_center",
-                "mode_of_payment",
-                "date_from",
-                "date_to",
-            ];
-            fields.forEach((name) => {
-                const el = form.elements[name];
-                if (el && el.value) {
-                    params.append(name, el.value);
-                }
-            });
-        }
+        if (!form) return params;
+
+        // Iterate through all named form controls and set/clear params according to their values.
+        Array.from(form.elements).forEach((el) => {
+            if (!el.name) return;
+
+            // Skip buttons and fieldsets
+            if (
+                el.type === "button" ||
+                el.type === "submit" ||
+                el.tagName === "FIELDSET"
+            )
+                return;
+
+            // Handle checkboxes/radios: only include if checked
+            if (
+                (el.type === "checkbox" || el.type === "radio") &&
+                !el.checked
+            ) {
+                params.delete(el.name);
+                return;
+            }
+
+            if (el.value !== undefined && el.value !== "") {
+                params.set(el.name, el.value);
+            } else {
+                // Remove empty values so backend falls back to defaults
+                params.delete(el.name);
+            }
+        });
+
         return params;
     }
 

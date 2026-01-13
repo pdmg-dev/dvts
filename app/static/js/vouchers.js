@@ -1,5 +1,32 @@
 // Initialize all functionalities on page load
 document.addEventListener("DOMContentLoaded", function () {
+    // Check if we're on the vouchers page
+    const vouchersTable = document.getElementById("vouchersTable");
+    if (!vouchersTable) {
+        return; // Not on vouchers page, skip
+    }
+
+    // Try to restore sort/filter params from localStorage if not in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasAnyParams = urlParams.toString().length > 0;
+
+    if (!hasAnyParams) {
+        // No params in URL, check localStorage
+        const savedParams = localStorage.getItem("voucherListParams");
+        if (savedParams) {
+            // Reload page with saved params
+            const newUrl = `${window.location.pathname}?${savedParams}`;
+            window.location.href = newUrl;
+            return; // Exit - page will reload
+        }
+    }
+
+    // Save current params for next visit
+    const currentParams = window.location.search.substring(1);
+    if (currentParams) {
+        localStorage.setItem("voucherListParams", currentParams);
+    }
+
     initSelectAllVouchers();
     initTableScroll();
     initSplitLayout();
@@ -11,6 +38,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Re-initialize functionalities after HTMX content swap
 document.addEventListener("htmx:afterSwap", (evt) => {
+    // Check if this is the vouchers page content
+    const isVouchersSwap =
+        !!evt.target.querySelector("#vouchersTable") ||
+        !!evt.target.querySelector("#filterBtn");
+    if (!isVouchersSwap) return;
+
+    // If navigated back to vouchers without params, restore last saved ones once
+    const hasParams =
+        new URLSearchParams(window.location.search).toString().length > 0;
+    if (!hasParams) {
+        const savedParams = localStorage.getItem("voucherListParams");
+        const restoredOnce =
+            sessionStorage.getItem("voucherListRestored") === "true";
+        if (savedParams && !restoredOnce) {
+            const url = `${window.location.pathname}?${savedParams}`;
+            sessionStorage.setItem("voucherListRestored", "true");
+            // Update URL so subsequent swaps see params and avoid loops
+            window.history.replaceState({}, "", url);
+            // Refresh vouchers content with restored params
+            htmx.ajax("GET", url, "#content");
+            return;
+        }
+    }
+
+    // Save current params to localStorage for persistence
+    const currentParams = window.location.search.substring(1);
+    if (currentParams) {
+        localStorage.setItem("voucherListParams", currentParams);
+    }
+
     // Only rebind if the swapped content contains the vouchers table
     if (evt.target.querySelector("#vouchersTable")) {
         initSelectAllVouchers();
@@ -242,9 +299,6 @@ function initFilterPanel() {
 
     if (!filterBtn || !filterPanel) return;
 
-    // Always reinitialize - clear old bound state
-    filterPanel.dataset.bound = "false";
-
     const closeFilterBtn = document.getElementById("closeFilterBtn");
     const clearFiltersBtn = document.getElementById("clearFiltersBtn");
     const mainContent = document.querySelector("main");
@@ -283,11 +337,11 @@ function initFilterPanel() {
         );
     }
 
-    // Toggle filter panel - prevent duplicate listeners by removing old ones first
-    filterBtn.replaceWith(filterBtn.cloneNode(true));
-    const newFilterBtn = document.getElementById("filterBtn");
+    // Check if already bound to prevent duplicate listeners
+    if (filterBtn.dataset.bound === "true") return;
+    filterBtn.dataset.bound = "true";
 
-    newFilterBtn.addEventListener("click", (evt) => {
+    filterBtn.addEventListener("click", (evt) => {
         evt.preventDefault();
         evt.stopPropagation();
 
@@ -527,10 +581,26 @@ function initTableSorting() {
                 newDir = "desc";
             }
 
-            // Build URL with sort parameters
+            // Persist to localStorage
+            localStorage.setItem("voucherSortBy", sortColumn);
+            localStorage.setItem("voucherSortDir", newDir);
+
+            // Build URL with sort parameters, preserving remember_view
             const url = new URL(window.location);
             url.searchParams.set("sort_by", sortColumn);
             url.searchParams.set("sort_dir", newDir);
+
+            // Preserve remember_view checkbox state
+            const rememberCheck = document.getElementById("rememberViewCheck");
+            if (rememberCheck) {
+                url.searchParams.set(
+                    "remember_view",
+                    rememberCheck.checked ? "true" : "false",
+                );
+            }
+
+            // Save all current params to localStorage
+            localStorage.setItem("voucherListParams", url.search.substring(1));
 
             // Update browser history with new URL
             window.history.pushState({}, "", url.toString());
@@ -547,12 +617,11 @@ function initTableSorting() {
     const currentSort = new URLSearchParams(window.location.search).get(
         "sort_by",
     );
-    const currentDir = new URLSearchParams(window.location.search).get(
-        "sort_dir",
-    );
+    const currentDir =
+        new URLSearchParams(window.location.search).get("sort_dir") || "asc";
 
     if (currentSort) {
-        updateSortIndicators(currentSort, currentDir || "asc");
+        updateSortIndicators(currentSort, currentDir);
     }
 }
 

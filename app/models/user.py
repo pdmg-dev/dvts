@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timezone
 
 from flask_login import UserMixin
@@ -23,6 +24,9 @@ class User(db.Model, UserMixin):
 
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
+    # JSON string to store per-user preferences
+    preferences_json = db.Column(db.Text, nullable=True)
+
     def set_password(self, password: str):
         self.password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
 
@@ -31,6 +35,20 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"<User {self.username}>"
+
+    # Preferences helpers
+    def get_preferences(self) -> dict:
+        try:
+            return json.loads(self.preferences_json) if self.preferences_json else {}
+        except Exception:
+            return {}
+
+    def set_preferences(self, prefs: dict):
+        try:
+            self.preferences_json = json.dumps(prefs)
+        except Exception:
+            # Fallback: clear preferences if serialization fails
+            self.preferences_json = None
 
 
 class Role(db.Model):
